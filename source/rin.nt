@@ -1,0 +1,15 @@
+import {
+  this.error {CURL-Code, error},
+}
+
+inline rin(a: type): type {
+  either(error, a)
+}
+
+inline _wrap-curl-code<a>(code: int, result: a): rin(a) {
+  if eq-int(code, 0) {
+    Right(result)
+  } else {
+    Left(CURL-Code(code))
+  }
+}

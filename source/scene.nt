@@ -1,0 +1,112 @@
+import {
+  binary-builder.entity {builder, create, get},
+  binary-builder.scene {_get-head-ptr, _proceed},
+  core.external {free},
+  core.memory {load-int},
+  core.text {_Text, text-byte-length},
+  core.word,
+  http-base.header {header},
+  http-base.header.parse {header-parser},
+  http-base.request {Request, request},
+  http-base.request-method.show {show-request-method},
+  http-base.response {Response, response},
+  path.path,
+  this.error {Response-Parsing-Failure},
+  this.foreign {
+    CURLINFO_RESPONSE_CODE,
+    CURLOPT_CUSTOMREQUEST,
+    CURLOPT_HEADERDATA,
+    CURLOPT_HEADERFUNCTION,
+    CURLOPT_HTTPHEADER,
+    CURLOPT_POSTFIELDS,
+    CURLOPT_POSTFIELDSIZE,
+    CURLOPT_URL,
+    CURLOPT_WRITEDATA,
+    CURLOPT_WRITEFUNCTION,
+  },
+  this.handle {
+    _curl_easy_getinfo,
+    _curl_easy_perform,
+    _curl_easy_setopt,
+    _curl_easy_setopt_text,
+    _with-handle,
+  },
+  this.header {_slist, _with-header},
+  this.rin {rin},
+  zonk.parser,
+  zonk.state {new-state},
+}
+
+foreign {
+  llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1): void,
+}
+
+define _callback(ptr: int, size: int, nmemb: int, stream: &builder): int {
+  let total-size = mul-int(size, nmemb) in
+  let content-head-ptr = _get-head-ptr(stream, total-size) in
+  let zero: int = 0 in
+  magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, zero);
+  _proceed(stream, total-size);
+  total-size
+}
+
+define _get-callback-label-ptr(): int {
+  let callback-ptr = magic cast(_, int, _callback) in
+  let callback-label-ptr = load-int(add-int(callback-ptr, mul-int(core.word.size, 2))) in
+  free(callback-ptr);
+  callback-label-ptr
+}
+
+define _read-header(header-text: text): rin(header) {
+  pin st = new-state(header-text) in
+  match zonk.parser.run(header-parser(), st) {
+  | Right(value) =>
+    Right(value)
+  | Left(_) =>
+    Left(Response-Parsing-Failure)
+  }
+}
+
+define ask(host: &text, req: request, header-buffer-size: int, body-buffer-size: int): rin(response) {
+  _with-handle(function (h) {
+    let Request of {method, path, fields, body} = req in
+    let url on path = path.path.append(host, path) in
+    pin url = url in
+    try _ = _curl_easy_setopt_text(h, CURLOPT_URL, url) in
+    // set method
+    pin method' = show-request-method(method) in
+    try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method') in
+    _with-header(fields, function (slist) {
+      try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist)) in
+      pin body = body in
+      try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body) in
+      try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body)) in
+      // get the closure ptr
+      let callback-label-ptr = _get-callback-label-ptr() in
+      // set the header reader
+      let header-buffer = create(header-buffer-size) in
+      let _ on header-buffer =
+        // fixme
+        _curl_easy_setopt(h, CURLOPT_HEADERDATA, magic cast(&builder, int, header-buffer))
+      in
+      try _ = _curl_easy_setopt(h, CURLOPT_HEADERFUNCTION, callback-label-ptr) in
+      // set the response reader
+      let body-buffer = create(body-buffer-size) in
+      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&builder, int, body-buffer)) in
+      try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr) in
+      // perform request
+      try _ = _curl_easy_perform(h) in
+      try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE) in
+      let header-text = _Text(get(header-buffer)) in
+      try fields = _read-header(header-text) in
+      let body = _Text(get(body-buffer)) in
+      Right(
+        Response of {
+          status-code,
+          fields,
+          body,
+        },
+      )
+    })
+  })
+}

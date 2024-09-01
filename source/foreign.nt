@@ -1,7 +1,5 @@
 import {
-  core.memory {load-int},
   core.text {_get-content-pointer, format},
-  this.curl {CURL},
 }
 
 foreign {
@@ -23,7 +21,6 @@ foreign {
   curl_easy_setopt(pointer, int): int,
   curl_easy_getinfo(pointer, int): int,
   curl_easy_perform(pointer): int,
-  curl_easy_strerror(int): pointer,
   curl_slist_append(pointer, pointer): pointer,
   curl_slist_free_all(pointer): void,
 }
@@ -80,38 +77,16 @@ define _curl_global_init(flags: int): int {
   magic external curl_global_init(flags)
 }
 
-define _curl_easy_init(): ?CURL {
-  let result = magic external curl_easy_init() in
-  if eq-int(result, 0) {
-    none()
-  } else {
-    Right(magic cast(int, CURL, result))
-  }
-}
-
-define _curl_easy_cleanup(curl: CURL): unit {
-  magic external curl_easy_cleanup(curl)
-}
-
-define _curl_easy_getinfo(handle: CURL, option: int): int {
-  // cf: CURLcode curl_easy_setopt(struct Curl_easy *data, CURLoption tag, ...)
-  let buffer: int = magic alloca(int, 1) in
-  let result: int = magic external curl_easy_getinfo(handle, option)(buffer: int) in
-  load-int(buffer)
-}
-
-define _curl_easy_setopt(handle: CURL, option: int, parameter: int): int {
-  // cf: CURLcode curl_easy_setopt(struct Curl_easy *data, CURLoption tag, ...)
-  magic external curl_easy_setopt(handle, option)(parameter: int)
-}
-
-define _curl_easy_setopt_text(handle: CURL, option: int, parameter: &text): int {
-  let content = _get-content-pointer(parameter) in
-  magic external curl_easy_setopt(handle, option)(content: int)
-}
-
-define _curl_easy_perform(h: CURL): int {
-  magic external curl_easy_perform(h)
+// define _curl_easy_init(): ?CURL {
+//   let result = magic external curl_easy_init() in
+//   if eq-int(result, 0) {
+//     none()
+//   } else {
+//     Right(magic cast(int, CURL, result))
+//   }
+// }
+define _curl_easy_init(): int {
+  magic external curl_easy_init()
 }
 
 define _curl_slist_append(slist-ptr: int, key: text, value: text): int {

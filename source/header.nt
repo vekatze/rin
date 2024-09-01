@@ -1,0 +1,75 @@
+import {
+  core.text {_get-content-pointer, format},
+  http-base.field {Field},
+  http-base.header {header},
+  this.error {Header-Construction-Failure, error},
+  this.rin {rin},
+}
+
+foreign {
+  curl_slist_append(pointer, pointer): pointer,
+  curl_slist_free_all(pointer): void,
+}
+
+data _slist {}
+
+constant _empty-slist: _slist {
+  magic cast(int, _slist, 0)
+}
+
+inline _fold-left-maybe<elem-type, result-type>(
+  acc: result-type,
+  xs: list(elem-type),
+  consumer: (result-type, elem-type) -> ?result-type,
+): ?result-type {
+  let helper =
+    define loop(acc, xs): ?result-type {
+      match xs {
+      | Nil =>
+        Right(acc)
+      | Cons(y, ys) =>
+        try tmp = consumer(acc, y) in
+        loop(tmp, ys)
+      }
+    }
+  in
+  helper(acc, xs)
+}
+
+inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
+  pin kv = format("{}: {}", [key, value]) in
+  let content = _get-content-pointer(kv) in
+  let result = magic external curl_slist_append(slist-ptr, content) in
+  if eq-int(result, 0) {
+    none()
+  } else {
+    Right(magic cast(int, _slist, result))
+  }
+}
+
+define _make-slist-maybe(fields: header): ?_slist {
+  _fold-left-maybe(_empty-slist, fields, function (acc, field) {
+    let Field(key, value) = field in
+    _slist-append-maybe(acc, key, value)
+  })
+}
+
+define _slist-free(slist-ptr: _slist): unit {
+  magic external curl_slist_free_all(slist-ptr)
+}
+
+define _lift-none<a>(e: ?a): either(error, a) {
+  match e {
+  | Right(v) =>
+    Right(v)
+  | Left(_) =>
+    Left(Header-Construction-Failure)
+  }
+}
+
+define _with-header<a>(fields: header, callback: (_slist) -> rin(a)): rin(a) {
+  try slist = _lift-none(_make-slist-maybe(fields)) in
+  try result = callback(slist) in
+  _slist-free(slist);
+  Right(result)
+}

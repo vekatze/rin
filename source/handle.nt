@@ -1,0 +1,91 @@
+import {
+  core.memory {load-int},
+  core.text {_get-content-pointer},
+  this.error {CURL-Code, Init-Error},
+  this.foreign {CURL_GLOBAL_DEFAULT, _curl_easy_init, _curl_global_init},
+  this.rin {_wrap-curl-code, rin},
+}
+
+foreign {
+  curl_global_init(pointer): int,
+  curl_global_cleanup(): void,
+  curl_easy_init(): int,
+  curl_easy_cleanup(pointer): void,
+  curl_easy_setopt(pointer, int): int,
+  curl_easy_getinfo(pointer, int): int,
+  curl_easy_perform(pointer): int,
+  curl_slist_append(pointer, pointer): pointer,
+  curl_slist_free_all(pointer): void,
+}
+
+data handle {}
+
+define _global-init(): rin(unit) {
+  let code = _curl_global_init(CURL_GLOBAL_DEFAULT) in
+  _wrap-curl-code(code, Unit)
+}
+
+define _global_cleanup(): unit {
+  magic external curl_global_cleanup()
+}
+
+define init(): rin(handle) {
+  let result = _curl_easy_init() in
+  if eq-int(result, 0) {
+    Left(Init-Error)
+  } else {
+    Right(magic cast(int, handle, result))
+  }
+}
+
+define _cleanup(h: handle): unit {
+  magic external curl_easy_cleanup(h)
+}
+
+define _init(): ?handle {
+  match init() {
+  | Right(v) =>
+    Right(v)
+  | Left(_) =>
+    none()
+  }
+}
+
+define _curl_easy_getinfo(h: handle, option: int): rin(int) {
+  // cf: handlecode curl_easy_setopt(struct Curl_easy *data, handleoption tag, ...)
+  let buffer: int = magic alloca(int, 1) in
+  let result = magic external curl_easy_getinfo(h, option)(buffer: int) in
+  if eq-int(result, 0) {
+    Right(load-int(buffer))
+  } else {
+    Left(CURL-Code(result))
+  }
+}
+
+define _curl_easy_setopt(h: handle, option: int, parameter: int): rin(unit) {
+  let code = magic external curl_easy_setopt(h, option)(parameter: int) in
+  _wrap-curl-code(code, Unit)
+}
+
+define _curl_easy_setopt_text(h: handle, option: int, parameter: &text): rin(unit) {
+  let content = _get-content-pointer(parameter) in
+  let code = magic external curl_easy_setopt(h, option)(content: int) in
+  _wrap-curl-code(code, Unit)
+}
+
+define _curl_easy_perform(h: handle): rin(unit) {
+  let code = magic external curl_easy_perform(h) in
+  _wrap-curl-code(code, Unit)
+}
+
+define _with-handle<a>(callback: (handle) -> rin(a)): rin(a) {
+  try _ = _global-init() in
+  try h = init() in
+  try result =
+    let tmp = callback(h) in
+    _cleanup(h);
+    _global_cleanup();
+    tmp
+  in
+  Right(result)
+}

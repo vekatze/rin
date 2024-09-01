@@ -1,4 +1,28 @@
+import {
+  core.text {_from-c-string},
+}
+
 data error {
-| CURL-Error(error-code: int)
-| Library-Error
+| CURL-Code(error-code: int)
+| Init-Error
+| Response-Parsing-Failure
+| Header-Construction-Failure
+}
+
+foreign {
+  curl_easy_strerror(int): pointer,
+}
+
+define show-error(e: error): text {
+  match e {
+  | CURL-Code(c) =>
+    let str: int = magic external curl_easy_strerror(c) in
+    _from-c-string(str)
+  | Init-Error =>
+    *"Failed to initialize libcurl"
+  | Header-Construction-Failure =>
+    *"Failed to construct the request header"
+  | Response-Parsing-Failure =>
+    *"Failed to parse the response header"
+  }
 }
