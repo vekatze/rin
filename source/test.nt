@@ -1,0 +1,165 @@
+import {
+  binary-builder.entity {builder, create, get},
+  binary-builder.scene {_get-head-ptr, _proceed},
+  core.control {discard},
+  core.external {free},
+  core.int.show {show-int},
+  core.memory {load-int},
+  core.text {_Text, text-byte-length},
+  core.word,
+  http-base.field {Field},
+  http-base.header {header},
+  http-base.header.parse {header-parser},
+  http-base.header.show {show-header},
+  http-base.request {Request, request},
+  http-base.request-method {GET},
+  http-base.request-method.show {show-request-method},
+  http-base.response {Response, response},
+  path.path,
+  this.foreign {
+    CURLINFO_RESPONSE_CODE,
+    CURLOPT_CUSTOMREQUEST,
+    CURLOPT_HEADERDATA,
+    CURLOPT_HEADERFUNCTION,
+    CURLOPT_HTTPHEADER,
+    CURLOPT_POSTFIELDS,
+    CURLOPT_POSTFIELDSIZE,
+    CURLOPT_URL,
+    CURLOPT_WRITEDATA,
+    CURLOPT_WRITEFUNCTION,
+    CURL_GLOBAL_DEFAULT,
+    _curl_easy_getinfo,
+    _curl_easy_init,
+    _curl_easy_perform,
+    _curl_easy_setopt,
+    _curl_easy_setopt_text,
+    _curl_global_init,
+    _curl_slist_append,
+    _curl_slist_free_all,
+  },
+  zonk.parser,
+  zonk.state {new-state},
+}
+
+foreign {
+  llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1): void,
+}
+
+define _callback(ptr: int, size: int, nmemb: int, stream: &builder): int {
+  let total-size = mul-int(size, nmemb) in
+  let content-head-ptr = _get-head-ptr(stream, total-size) in
+  let zero: int = 0 in
+  magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, zero);
+  _proceed(stream, total-size);
+  total-size
+}
+
+define _read-header(header-text: text): ?header {
+  pin st = new-state(header-text) in
+  match zonk.parser.run(header-parser(), st) {
+  | Right(value) =>
+    Right(value)
+  | Left(_) =>
+    none()
+  }
+}
+
+define send-request(host: &text, req: request, header-buffer-size: int, body-buffer-size: int): ?response {
+  let Request of {method, path, fields, body} = req in
+  let init-result = _curl_global_init(CURL_GLOBAL_DEFAULT) in
+  printf("init-result: {}\n", [show-int(init-result)]);
+  try h = _curl_easy_init() in
+  // set url
+  let url on path = path.path.append(host, path) in
+  pin url = url in
+  printf("url: {}\n", [*url]);
+  let _ = _curl_easy_setopt_text(h, CURLOPT_URL, url) in
+  // set method
+  pin method' = show-request-method(method) in
+  let _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method') in
+  // set header
+  let headers: int =
+    fold-left(0, fields, function (acc, field) {
+      let Field(key, value) = field in
+      _curl_slist_append(acc, key, value)
+    })
+  in
+  let _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, headers) in
+  // set body
+  let _ on body =
+    printf("body: {}\n", [*body]);
+    let _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body) in
+    _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body))
+  in
+  // get the closure ptr
+  let callback-ptr = magic cast(_, int, _callback) in
+  let callback-label-ptr = load-int(add-int(callback-ptr, mul-int(core.word.size, 2))) in
+  free(callback-ptr);
+  // set the header reader
+  let header-buffer = create(header-buffer-size) in
+  let _ on header-buffer = _curl_easy_setopt(h, CURLOPT_HEADERDATA, magic cast(&builder, int, header-buffer)) in
+  let _ = _curl_easy_setopt(h, CURLOPT_HEADERFUNCTION, callback-label-ptr) in
+  // set the response reader
+  let body-buffer = create(body-buffer-size) in
+  let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&builder, int, body-buffer)) in
+  let _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr) in
+  // perform request
+  let perform-result = _curl_easy_perform(h) in
+  discard(body);
+  // discard(buffer);
+  let header-text = _Text(get(header-buffer)) in
+  let body = _Text(get(body-buffer)) in
+  try header = _read-header(header-text) in
+  // printf("header-text:\n{}\n", [header-text]);
+  _curl_slist_free_all(headers);
+  // read the status code
+  let status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE) in
+  Right(
+    Response of {
+      status-code,
+      fields = header,
+      body,
+    },
+  )
+}
+
+define main(): unit {
+  let result =
+    send-request(
+      "https://example.com",
+      Request of {
+        method = GET,
+        // path = *"/some/path/v1-4/chat",
+        path = *"/",
+        fields = {
+          [
+            Field(*"My-Field", *"hoge"),
+            Field(*"Content-Type", *"application/json"),
+            Field(*"x-my-extension", *"Bearer 1234567890"),
+          ]
+        },
+        body = *"",
+      },
+      10,
+      100,
+    )
+  in
+  // let result = _curl_global_init(CURL_GLOBAL_DEFAULT) in
+  // printf("init-result: {}\n", [show-int(result)]);
+  // let curl-or-none = _curl_easy_init() in
+  match result {
+  | Right(response) =>
+    let Response of {body, fields} = response in
+    printf("success:\n{}\n", [body]);
+    printf("header:\n{}\n", [show-header(fields)])
+    // req(h, "http://localhost:8080");
+    // _curl_easy_cleanup(h);
+    // print("Hello, world!\n")
+  | Left(_) =>
+    print("fail\n")
+  }
+}
+
+define zen(): unit {
+  main()
+}

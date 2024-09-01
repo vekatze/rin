@@ -1,0 +1,125 @@
+import {
+  core.memory {load-int},
+  core.text {_get-content-pointer, format},
+  this.curl {CURL},
+}
+
+foreign {
+  neut_rin_v0_1_CURL_GLOBAL_DEFAULT(): int,
+  neut_rin_v0_1_CURLINFO_RESPONSE_CODE(): int,
+  neut_rin_v0_1_CURLOPT_CUSTOMREQUEST(): int,
+  neut_rin_v0_1_CURLOPT_HTTPHEADER(): int,
+  neut_rin_v0_1_CURLOPT_POSTFIELDS(): int,
+  neut_rin_v0_1_CURLOPT_POSTFIELDSIZE(): int,
+  neut_rin_v0_1_CURLOPT_URL(): int,
+  neut_rin_v0_1_CURLOPT_WRITEFUNCTION(): int,
+  neut_rin_v0_1_CURLOPT_WRITEDATA(): int,
+  neut_rin_v0_1_CURLOPT_HEADERFUNCTION(): int,
+  neut_rin_v0_1_CURLOPT_HEADERDATA(): int,
+  neut_rin_v0_1_CURLE_OK(): int,
+  curl_global_init(pointer): int,
+  curl_easy_init(): int,
+  curl_easy_cleanup(pointer): void,
+  curl_easy_setopt(pointer, int): int,
+  curl_easy_getinfo(pointer, int): int,
+  curl_easy_perform(pointer): int,
+  curl_easy_strerror(int): pointer,
+  curl_slist_append(pointer, pointer): pointer,
+  curl_slist_free_all(pointer): void,
+}
+
+constant CURL_GLOBAL_DEFAULT: int {
+  magic external neut_rin_v0_1_CURL_GLOBAL_DEFAULT()
+}
+
+constant CURLINFO_RESPONSE_CODE: int {
+  magic external neut_rin_v0_1_CURLINFO_RESPONSE_CODE()
+}
+
+constant CURLOPT_CUSTOMREQUEST: int {
+  magic external neut_rin_v0_1_CURLOPT_CUSTOMREQUEST()
+}
+
+constant CURLOPT_HTTPHEADER: int {
+  magic external neut_rin_v0_1_CURLOPT_HTTPHEADER()
+}
+
+constant CURLOPT_POSTFIELDS: int {
+  magic external neut_rin_v0_1_CURLOPT_POSTFIELDS()
+}
+
+constant CURLOPT_POSTFIELDSIZE: int {
+  magic external neut_rin_v0_1_CURLOPT_POSTFIELDSIZE()
+}
+
+constant CURLOPT_URL: int {
+  magic external neut_rin_v0_1_CURLOPT_URL()
+}
+
+constant CURLOPT_WRITEFUNCTION: int {
+  magic external neut_rin_v0_1_CURLOPT_WRITEFUNCTION()
+}
+
+constant CURLOPT_WRITEDATA: int {
+  magic external neut_rin_v0_1_CURLOPT_WRITEDATA()
+}
+
+constant CURLOPT_HEADERFUNCTION: int {
+  magic external neut_rin_v0_1_CURLOPT_HEADERFUNCTION()
+}
+
+constant CURLOPT_HEADERDATA: int {
+  magic external neut_rin_v0_1_CURLOPT_HEADERDATA()
+}
+
+constant CURLE_OK: int {
+  magic external neut_rin_v0_1_CURLE_OK()
+}
+
+define _curl_global_init(flags: int): int {
+  magic external curl_global_init(flags)
+}
+
+define _curl_easy_init(): ?CURL {
+  let result = magic external curl_easy_init() in
+  if eq-int(result, 0) {
+    none()
+  } else {
+    Right(magic cast(int, CURL, result))
+  }
+}
+
+define _curl_easy_cleanup(curl: CURL): unit {
+  magic external curl_easy_cleanup(curl)
+}
+
+define _curl_easy_getinfo(handle: CURL, option: int): int {
+  // cf: CURLcode curl_easy_setopt(struct Curl_easy *data, CURLoption tag, ...)
+  let buffer: int = magic alloca(int, 1) in
+  let result: int = magic external curl_easy_getinfo(handle, option)(buffer: int) in
+  load-int(buffer)
+}
+
+define _curl_easy_setopt(handle: CURL, option: int, parameter: int): int {
+  // cf: CURLcode curl_easy_setopt(struct Curl_easy *data, CURLoption tag, ...)
+  magic external curl_easy_setopt(handle, option)(parameter: int)
+}
+
+define _curl_easy_setopt_text(handle: CURL, option: int, parameter: &text): int {
+  let content = _get-content-pointer(parameter) in
+  magic external curl_easy_setopt(handle, option)(content: int)
+}
+
+define _curl_easy_perform(h: CURL): int {
+  magic external curl_easy_perform(h)
+}
+
+define _curl_slist_append(slist-ptr: int, key: text, value: text): int {
+  pin kv = format("{}: {}", [key, value]) in
+  let content = _get-content-pointer(kv) in
+  magic external curl_slist_append(slist-ptr, content)
+}
+
+define _curl_slist_free_all(slist-ptr: int): unit {
+  magic external curl_slist_free_all(slist-ptr)
+}

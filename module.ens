@@ -1,0 +1,59 @@
+{
+  target {
+    test {
+      main "test.nt",
+      build-option [
+        "$(pkg-config libcurl --libs --cflags)",
+      ],
+    },
+  },
+  zen {
+    build-option [
+      "$(pkg-config libcurl --libs --cflags)",
+    ],
+  },
+  foreign {
+    input [
+      "source/foreign.c",
+    ],
+    output [
+      "foreign.o",
+    ],
+    script [
+      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/foreign.c -o {{foreign}}/foreign.o",
+    ],
+  },
+  dependency {
+    core {
+      digest "hlWkGGTEYn6PSF1aT4Rb9WXwSkmMTacHVSx-_WSt9v0",
+      mirror [
+        "https://github.com/vekatze/neut-core/raw/main/archive/0-50-21.tar.zst",
+      ],
+      enable-preset true,
+    },
+    http-base {
+      digest "ARO9L51kg3R7qn_tK3itep_hZPm6q9kd94fldvj3sEM",
+      mirror [
+        "https://github.com/vekatze/http-base-nt/raw/main/archive/0-1-8.tar.zst",
+      ],
+    },
+    path {
+      digest "GmgZQeJ7wL4hosX3EvbAHRkj7E4XKXiFirIS5aWEK7g",
+      mirror [
+        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-5.tar.zst",
+      ],
+    },
+    binary-builder {
+      digest "8Y8HfEq-l1_pK4xKdjCTklU199Mfgvp6pFZLRFB2JpQ",
+      mirror [
+        "https://github.com/vekatze/binary-builder/raw/main/archive/0-1-6.tar.zst",
+      ],
+    },
+    zonk {
+      digest "Me0LGTtH8WxD8WKc0m9_fZWfmgAe_Ip4BUokVmbB-UY",
+      mirror [
+        "https://github.com/vekatze/zonk/raw/main/archive/0-1-19.tar.zst",
+      ],
+    },
+  },
+}

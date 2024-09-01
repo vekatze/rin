@@ -1,0 +1,4 @@
+data error {
+| CURL-Error(error-code: int)
+| Library-Error
+}
