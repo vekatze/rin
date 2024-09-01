@@ -2,7 +2,7 @@ import {
   core.memory {load-int},
   core.text {_get-content-pointer},
   this.error {CURL-Code, Init-Error},
-  this.foreign {CURL_GLOBAL_DEFAULT, _curl_easy_init, _curl_global_init},
+  this.foreign {CURL_GLOBAL_DEFAULT},
   this.rin {_wrap-curl-code, rin},
 }
 
@@ -20,6 +20,14 @@ foreign {
 
 data handle {}
 
+define _curl_global_init(flags: int): int {
+  magic external curl_global_init(flags)
+}
+
+define _curl_easy_init(): int {
+  magic external curl_easy_init()
+}
+
 define _global-init(): rin(unit) {
   let code = _curl_global_init(CURL_GLOBAL_DEFAULT) in
   _wrap-curl-code(code, Unit)
@@ -29,7 +37,7 @@ define _global_cleanup(): unit {
   magic external curl_global_cleanup()
 }
 
-define init(): rin(handle) {
+define _init(): rin(handle) {
   let result = _curl_easy_init() in
   if eq-int(result, 0) {
     Left(Init-Error)
@@ -42,17 +50,7 @@ define _cleanup(h: handle): unit {
   magic external curl_easy_cleanup(h)
 }
 
-define _init(): ?handle {
-  match init() {
-  | Right(v) =>
-    Right(v)
-  | Left(_) =>
-    none()
-  }
-}
-
 define _curl_easy_getinfo(h: handle, option: int): rin(int) {
-  // cf: handlecode curl_easy_setopt(struct Curl_easy *data, handleoption tag, ...)
   let buffer: int = magic alloca(int, 1) in
   let result = magic external curl_easy_getinfo(h, option)(buffer: int) in
   if eq-int(result, 0) {
@@ -78,9 +76,9 @@ define _curl_easy_perform(h: handle): rin(unit) {
   _wrap-curl-code(code, Unit)
 }
 
-define _with-handle<a>(callback: (handle) -> rin(a)): rin(a) {
+inline _with-handle<a>(callback: (handle) -> rin(a)): rin(a) {
   try _ = _global-init() in
-  try h = init() in
+  try h = _init() in
   try result =
     let tmp = callback(h) in
     _cleanup(h);

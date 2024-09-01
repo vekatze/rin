@@ -5,6 +5,7 @@ import {
   http-base.request {Request},
   http-base.request-method {GET},
   http-base.response {Response},
+  this.config {default-config},
   this.error {show-error},
   this.scene {ask},
 }
@@ -12,7 +13,7 @@ import {
 define main(): unit {
   let result =
     ask(
-      "https://example.com",
+      "http://localhost:8080/",
       Request of {
         method = GET,
         path = *"/aoeu",
@@ -23,10 +24,9 @@ define main(): unit {
             Field(*"x-my-extension", *"Bearer 1234567890"),
           ]
         },
-        body = *"",
+        body = *"なにかしらのbody",
       },
-      10,
-      100,
+      default-config,
     )
   in
   match result {

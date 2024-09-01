@@ -1,7 +1,3 @@
-import {
-  core.text {_get-content-pointer, format},
-}
-
 foreign {
   neut_rin_v0_1_CURL_GLOBAL_DEFAULT(): int,
   neut_rin_v0_1_CURLINFO_RESPONSE_CODE(): int,
@@ -15,14 +11,6 @@ foreign {
   neut_rin_v0_1_CURLOPT_HEADERFUNCTION(): int,
   neut_rin_v0_1_CURLOPT_HEADERDATA(): int,
   neut_rin_v0_1_CURLE_OK(): int,
-  curl_global_init(pointer): int,
-  curl_easy_init(): int,
-  curl_easy_cleanup(pointer): void,
-  curl_easy_setopt(pointer, int): int,
-  curl_easy_getinfo(pointer, int): int,
-  curl_easy_perform(pointer): int,
-  curl_slist_append(pointer, pointer): pointer,
-  curl_slist_free_all(pointer): void,
 }
 
 constant CURL_GLOBAL_DEFAULT: int {
@@ -71,30 +59,4 @@ constant CURLOPT_HEADERDATA: int {
 
 constant CURLE_OK: int {
   magic external neut_rin_v0_1_CURLE_OK()
-}
-
-define _curl_global_init(flags: int): int {
-  magic external curl_global_init(flags)
-}
-
-// define _curl_easy_init(): ?CURL {
-//   let result = magic external curl_easy_init() in
-//   if eq-int(result, 0) {
-//     none()
-//   } else {
-//     Right(magic cast(int, CURL, result))
-//   }
-// }
-define _curl_easy_init(): int {
-  magic external curl_easy_init()
-}
-
-define _curl_slist_append(slist-ptr: int, key: text, value: text): int {
-  pin kv = format("{}: {}", [key, value]) in
-  let content = _get-content-pointer(kv) in
-  magic external curl_slist_append(slist-ptr, content)
-}
-
-define _curl_slist_free_all(slist-ptr: int): unit {
-  magic external curl_slist_free_all(slist-ptr)
 }

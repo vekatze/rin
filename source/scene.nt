@@ -11,6 +11,7 @@ import {
   http-base.request-method.show {show-request-method},
   http-base.response {Response, response},
   path.path,
+  this.config {Config, config},
   this.error {Response-Parsing-Failure},
   this.foreign {
     CURLINFO_RESPONSE_CODE,
@@ -67,8 +68,9 @@ define _read-header(header-text: text): rin(header) {
   }
 }
 
-define ask(host: &text, req: request, header-buffer-size: int, body-buffer-size: int): rin(response) {
+define ask(host: &text, req: request, c: config): rin(response) {
   _with-handle(function (h) {
+    let Config of {header-buffer-size, body-buffer-size} = c in
     let Request of {method, path, fields, body} = req in
     let url on path = path.path.append(host, path) in
     pin url = url in
