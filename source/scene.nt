@@ -16,6 +16,7 @@ import {
   this.foreign {
     CURLINFO_RESPONSE_CODE,
     CURLOPT_CUSTOMREQUEST,
+    CURLOPT_FOLLOWLOCATION,
     CURLOPT_HEADERDATA,
     CURLOPT_HEADERFUNCTION,
     CURLOPT_HTTPHEADER,
@@ -29,6 +30,7 @@ import {
     _curl_easy_getinfo,
     _curl_easy_perform,
     _curl_easy_setopt,
+    _curl_easy_setopt_bool,
     _curl_easy_setopt_text,
     _with-handle,
   },
@@ -70,7 +72,8 @@ define _read-header(header-text: text): rin(header) {
 
 define ask(host: &text, req: request, c: config): rin(response) {
   _with-handle(function (h) {
-    let Config of {header-buffer-size, body-buffer-size} = c in
+    let Config of {header-buffer-size, body-buffer-size, follow-location} = c in
+    try _ = _curl_easy_setopt_bool(h, CURLOPT_FOLLOWLOCATION, follow-location) in
     let Request of {method, path, fields, body} = req in
     let url on path = path.path.append(host, path) in
     pin url = url in

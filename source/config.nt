@@ -2,6 +2,7 @@ data config {
 | Config(
     header-buffer-size: int,
     body-buffer-size: int,
+    follow-location: bool,
   )
 }
 
@@ -9,5 +10,6 @@ constant default-config: config {
   Config of {
     header-buffer-size = 512,
     body-buffer-size = 1024,
+    follow-location = True,
   }
 }

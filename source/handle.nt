@@ -65,6 +65,20 @@ define _curl_easy_setopt(h: handle, option: int, parameter: int): rin(unit) {
   _wrap-curl-code(code, Unit)
 }
 
+define _bool-to-int(b: bool): int {
+  if b {
+    1
+  } else {
+    0
+  }
+}
+
+define _curl_easy_setopt_bool(h: handle, option: int, parameter: bool): rin(unit) {
+  let content = _bool-to-int(parameter) in
+  let code = magic external curl_easy_setopt(h, option)(content: int) in
+  _wrap-curl-code(code, Unit)
+}
+
 define _curl_easy_setopt_text(h: handle, option: int, parameter: &text): rin(unit) {
   let content = _get-content-pointer(parameter) in
   let code = magic external curl_easy_setopt(h, option)(content: int) in

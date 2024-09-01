@@ -16,6 +16,12 @@ int neut_rin_v0_1_CURLOPT_CUSTOMREQUEST() {
 }
 
 __attribute__((always_inline))
+int neut_rin_v0_1_CURLOPT_FOLLOWLOCATION() {
+  return CURLOPT_FOLLOWLOCATION;
+}
+
+
+__attribute__((always_inline))
 int neut_rin_v0_1_CURLOPT_HTTPHEADER() {
   return CURLOPT_HTTPHEADER;
 }

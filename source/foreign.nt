@@ -2,6 +2,7 @@ foreign {
   neut_rin_v0_1_CURL_GLOBAL_DEFAULT(): int,
   neut_rin_v0_1_CURLINFO_RESPONSE_CODE(): int,
   neut_rin_v0_1_CURLOPT_CUSTOMREQUEST(): int,
+  neut_rin_v0_1_CURLOPT_FOLLOWLOCATION(): int,
   neut_rin_v0_1_CURLOPT_HTTPHEADER(): int,
   neut_rin_v0_1_CURLOPT_POSTFIELDS(): int,
   neut_rin_v0_1_CURLOPT_POSTFIELDSIZE(): int,
@@ -23,6 +24,10 @@ constant CURLINFO_RESPONSE_CODE: int {
 
 constant CURLOPT_CUSTOMREQUEST: int {
   magic external neut_rin_v0_1_CURLOPT_CUSTOMREQUEST()
+}
+
+constant CURLOPT_FOLLOWLOCATION: int {
+  magic external neut_rin_v0_1_CURLOPT_FOLLOWLOCATION()
 }
 
 constant CURLOPT_HTTPHEADER: int {
