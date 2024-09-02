@@ -1,12 +1,14 @@
 data config {
 | Config(
+    host: &text,
     buffer-size: int,
     follow-location: bool,
   )
 }
 
-constant default-config: config {
+define default-config(host: &text): config {
   Config of {
+    host,
     buffer-size = 1024,
     follow-location = True,
   }

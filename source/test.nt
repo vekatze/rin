@@ -1,31 +1,32 @@
 import {
   core.int.show {show-int},
+  http-base.field {Field},
   http-base.header.show {show-header},
   http-base.request {Request},
   http-base.request-method {GET},
   http-base.response {Response},
   this.config {Config},
   this.error {show-error},
-  this.scene {ask},
+  this.scene {perform},
 }
 
 define main(): unit {
   let result =
-    ask(
-      "https://google.com",
+    perform(
       Request of {
         method = GET,
         path = *"/",
         fields = {
           [
-            // Field(*"My-Field", *"hoge"),
-            // Field(*"Content-Type", *"application/json"),
-            // Field(*"x-my-extension", *"Bearer 1234567890"),
+            Field(*"My-Field", *"hoge"),
+            Field(*"Content-Type", *"application/json"),
+            Field(*"x-my-extension", *"Bearer 1234567890"),
           ]
         },
-        body = *"",
+        body = *"こんにちは〜",
       },
       Config of {
+        host = "http://localhost:8080",
         buffer-size = 1024,
         follow-location = True,
       },

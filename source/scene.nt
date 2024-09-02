@@ -72,9 +72,9 @@ define _read-all-headers(h: handle, cursor: int): header {
   }
 }
 
-define ask(host: &text, req: request, c: config): rin(response) {
+define perform(req: request, c: config): rin(response) {
   _with-handle(function (h) {
-    let Config of {buffer-size, follow-location} = c in
+    let Config of {host, buffer-size, follow-location} = c in
     try _ = _curl_easy_setopt_bool(h, CURLOPT_FOLLOWLOCATION, follow-location) in
     let Request of {method, path, fields, body} = req in
     let url on path = path.path.append(host, path) in
