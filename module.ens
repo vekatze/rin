@@ -49,11 +49,5 @@
         "https://github.com/vekatze/binary-builder/raw/main/archive/0-1-6.tar.zst",
       ],
     },
-    zonk {
-      digest "Me0LGTtH8WxD8WKc0m9_fZWfmgAe_Ip4BUokVmbB-UY",
-      mirror [
-        "https://github.com/vekatze/zonk/raw/main/archive/0-1-19.tar.zst",
-      ],
-    },
   },
 }

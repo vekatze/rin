@@ -6,6 +6,21 @@ int neut_rin_v0_1_CURL_GLOBAL_DEFAULT() {
 }
 
 __attribute__((always_inline))
+int neut_rin_v0_1_CURLH_HEADER() {
+  return CURLH_HEADER;
+}
+
+__attribute__((always_inline))
+char *neut_rin_v0_1_get_header_name(struct curl_header *h) {
+  return h->name;
+}
+
+__attribute__((always_inline))
+char *neut_rin_v0_1_get_header_value(struct curl_header *h) {
+  return h->value;
+}
+
+__attribute__((always_inline))
 int neut_rin_v0_1_CURLINFO_RESPONSE_CODE() {
   return CURLINFO_RESPONSE_CODE;
 }
@@ -19,7 +34,6 @@ __attribute__((always_inline))
 int neut_rin_v0_1_CURLOPT_FOLLOWLOCATION() {
   return CURLOPT_FOLLOWLOCATION;
 }
-
 
 __attribute__((always_inline))
 int neut_rin_v0_1_CURLOPT_HTTPHEADER() {

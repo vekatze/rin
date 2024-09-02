@@ -1,5 +1,6 @@
 foreign {
   neut_rin_v0_1_CURL_GLOBAL_DEFAULT(): int,
+  neut_rin_v0_1_CURLH_HEADER(): int,
   neut_rin_v0_1_CURLINFO_RESPONSE_CODE(): int,
   neut_rin_v0_1_CURLOPT_CUSTOMREQUEST(): int,
   neut_rin_v0_1_CURLOPT_FOLLOWLOCATION(): int,
@@ -16,6 +17,10 @@ foreign {
 
 constant CURL_GLOBAL_DEFAULT: int {
   magic external neut_rin_v0_1_CURL_GLOBAL_DEFAULT()
+}
+
+constant CURLH_HEADER: int {
+  magic external neut_rin_v0_1_CURLH_HEADER()
 }
 
 constant CURLINFO_RESPONSE_CODE: int {
