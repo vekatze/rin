@@ -27,7 +27,7 @@ define main(): unit {
       },
       Config of {
         host = "http://localhost:8080",
-        buffer-size = 1024,
+        initial-buffer-size = 1024,
         follow-location = True,
       },
     )

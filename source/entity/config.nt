@@ -1,7 +1,7 @@
 data config {
 | Config(
     host: &text,
-    buffer-size: int,
+    initial-buffer-size: int,
     follow-location: bool,
   )
 }
@@ -9,7 +9,7 @@ data config {
 define default-config(host: &text): config {
   Config of {
     host,
-    buffer-size = 1024,
+    initial-buffer-size = 1024,
     follow-location = True,
   }
 }
