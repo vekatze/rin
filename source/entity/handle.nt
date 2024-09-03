@@ -3,7 +3,7 @@ import {
   core.text {_get-content-pointer},
   this.context.foreign {CURL_GLOBAL_DEFAULT},
   this.context.rin {_wrap-curl-code, rin},
-  this.entity.error {CURL-Code, Init-Error},
+  this.entity.error {Curl-Error, Curl-Initialization-Error},
 }
 
 foreign {
@@ -40,7 +40,7 @@ define _global_cleanup(): unit {
 define _init(): rin(_handle) {
   let result = _curl_easy_init() in
   if eq-int(result, 0) {
-    Left(Init-Error)
+    Left(Curl-Initialization-Error)
   } else {
     Right(magic cast(int, _handle, result))
   }
@@ -56,7 +56,7 @@ define _curl_easy_getinfo(h: _handle, option: int): rin(int) {
   if eq-int(result, 0) {
     Right(load-int(buffer))
   } else {
-    Left(CURL-Code(result))
+    Left(Curl-Error(result))
   }
 }
 

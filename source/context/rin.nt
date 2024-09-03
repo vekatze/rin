@@ -1,5 +1,5 @@
 import {
-  this.entity.error {CURL-Code, error},
+  this.entity.error {Curl-Error, error},
 }
 
 inline rin(a: type): type {
@@ -10,6 +10,6 @@ inline _wrap-curl-code<a>(code: int, result: a): rin(a) {
   if eq-int(code, 0) {
     Right(result)
   } else {
-    Left(CURL-Code(code))
+    Left(Curl-Error(code))
   }
 }
