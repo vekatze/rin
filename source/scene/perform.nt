@@ -31,8 +31,8 @@ import {
     _curl_easy_setopt,
     _curl_easy_setopt_bool,
     _curl_easy_setopt_text,
+    _handle,
     _with-handle,
-    handle,
   },
   this.entity.slist {_slist, _with-header},
 }
@@ -60,7 +60,7 @@ define _get-callback-label-ptr(): int {
   callback-label-ptr
 }
 
-define _read-all-headers(h: handle, cursor: int): header {
+define _read-all-headers(h: _handle, cursor: int): header {
   let last: int = -1 in
   let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor) in
   if eq-int(new-header, 0) {
