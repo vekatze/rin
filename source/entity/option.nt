@@ -1,0 +1,4 @@
+data option {
+| Follow-Location(bool)
+| Timeout(int)
+}

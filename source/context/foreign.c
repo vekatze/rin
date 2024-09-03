@@ -51,6 +51,11 @@ int neut_rin_v0_1_CURLOPT_POSTFIELDSIZE() {
 }
 
 __attribute__((always_inline))
+int neut_rin_v0_1_CURLOPT_TIMEOUT() {
+  return CURLOPT_TIMEOUT;
+}
+
+__attribute__((always_inline))
 int neut_rin_v0_1_CURLOPT_URL() {
   return CURLOPT_URL;
 }

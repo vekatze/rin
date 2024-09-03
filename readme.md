@@ -28,7 +28,12 @@ define main(): unit {
         host = "https://example.com",
         // read the response body using a buffer with an initial size of 1024 bytes (doubling the size when necessary)
         initial-buffer-size = 1024,
-        follow-location = True,
+        options = {
+          [
+            Follow-Location(True),
+            Timeout(123),
+          ]
+        },
       },
     )
   in

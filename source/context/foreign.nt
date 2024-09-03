@@ -7,6 +7,7 @@ foreign {
   neut_rin_v0_1_CURLOPT_HTTPHEADER(): int,
   neut_rin_v0_1_CURLOPT_POSTFIELDS(): int,
   neut_rin_v0_1_CURLOPT_POSTFIELDSIZE(): int,
+  neut_rin_v0_1_CURLOPT_TIMEOUT(): int,
   neut_rin_v0_1_CURLOPT_URL(): int,
   neut_rin_v0_1_CURLOPT_WRITEFUNCTION(): int,
   neut_rin_v0_1_CURLOPT_WRITEDATA(): int,
@@ -45,6 +46,10 @@ constant CURLOPT_POSTFIELDS: int {
 
 constant CURLOPT_POSTFIELDSIZE: int {
   magic external neut_rin_v0_1_CURLOPT_POSTFIELDSIZE()
+}
+
+constant CURLOPT_TIMEOUT: int {
+  magic external neut_rin_v0_1_CURLOPT_TIMEOUT()
 }
 
 constant CURLOPT_URL: int {

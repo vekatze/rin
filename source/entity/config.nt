@@ -1,8 +1,12 @@
+import {
+  this.entity.option {Follow-Location, option},
+}
+
 data config {
 | Config(
     host: &text,
     initial-buffer-size: int,
-    follow-location: bool,
+    options: list(option),
   )
 }
 
@@ -10,6 +14,10 @@ define default-config(host: &text): config {
   Config of {
     host,
     initial-buffer-size = 1024,
-    follow-location = True,
+    options = {
+      [
+        Follow-Location(True),
+      ]
+    },
   }
 }
