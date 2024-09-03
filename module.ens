@@ -14,13 +14,13 @@
   },
   foreign {
     input [
-      "source/foreign.c",
+      "source/context/foreign.c",
     ],
     output [
       "foreign.o",
     ],
     script [
-      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/foreign.c -o {{foreign}}/foreign.o",
+      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/context/foreign.c -o {{foreign}}/foreign.o",
     ],
   },
   dependency {

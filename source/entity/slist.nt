@@ -2,8 +2,8 @@ import {
   core.text {_get-content-pointer, format},
   http-base.field {Field},
   http-base.header {header},
-  this.error {Header-Construction-Failure, error},
-  this.rin {rin},
+  this.entity.error {Header-Construction-Failure, error},
+  this.context.rin {rin},
 }
 
 foreign {

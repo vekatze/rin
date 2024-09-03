@@ -1,9 +1,9 @@
 import {
   core.memory {load-int},
   core.text {_get-content-pointer},
-  this.error {CURL-Code, Init-Error},
-  this.foreign {CURL_GLOBAL_DEFAULT},
-  this.rin {_wrap-curl-code, rin},
+  this.context.foreign {CURL_GLOBAL_DEFAULT},
+  this.context.rin {_wrap-curl-code, rin},
+  this.entity.error {CURL-Code, Init-Error},
 }
 
 foreign {

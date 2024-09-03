@@ -11,8 +11,7 @@ import {
   http-base.request-method.show {show-request-method},
   http-base.response {Response, response},
   path.path,
-  this.config {Config, config},
-  this.foreign {
+  this.context.foreign {
     CURLH_HEADER,
     CURLINFO_RESPONSE_CODE,
     CURLOPT_CUSTOMREQUEST,
@@ -24,7 +23,9 @@ import {
     CURLOPT_WRITEDATA,
     CURLOPT_WRITEFUNCTION,
   },
-  this.handle {
+  this.context.rin {rin},
+  this.entity.config {Config, config},
+  this.entity.handle {
     _curl_easy_getinfo,
     _curl_easy_perform,
     _curl_easy_setopt,
@@ -33,8 +34,7 @@ import {
     _with-handle,
     handle,
   },
-  this.header {_slist, _with-header},
-  this.rin {rin},
+  this.entity.slist {_slist, _with-header},
 }
 
 foreign {

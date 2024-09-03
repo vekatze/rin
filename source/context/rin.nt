@@ -1,5 +1,5 @@
 import {
-  this.error {CURL-Code, error},
+  this.entity.error {CURL-Code, error},
 }
 
 inline rin(a: type): type {

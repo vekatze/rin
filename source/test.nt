@@ -5,9 +5,9 @@ import {
   http-base.request {Request},
   http-base.request-method {GET},
   http-base.response {Response},
-  this.config {Config},
-  this.error {show-error},
-  this.scene {perform},
+  this.entity.config {Config},
+  this.entity.error {show-error},
+  this.scene.perform {perform},
 }
 
 define main(): unit {
