@@ -1,6 +1,32 @@
 # rin
 
-`rin` is a libcurl-based HTTP client for the [Neut](https://vekatze.github.io/neut/) programming language.
+`rin` is a libcurl-based HTTP client library for the [Neut](https://vekatze.github.io/neut/) programming language.
+
+## Prerequisites
+
+Install `libcurl` on your machine (if not exists) and add something like the below to your `module.ens`:
+
+```ens
+{
+  // ..
+  target {
+    test {
+      main "test.nt",
+      // ↓ this
+      build-option [
+        "$(pkg-config libcurl --libs --cflags)",
+      ],
+    },
+  },
+  zen {
+    // ↓ this
+    build-option [
+      "$(pkg-config libcurl --libs --cflags)",
+    ],
+  },
+  // ..
+}
+```
 
 ## Example
 
@@ -18,7 +44,7 @@ define main(): unit {
         fields = {
           [
             Field(*"Content-Type", *"application/json"),
-            Field(*"x-my-extension", *"foo"),
+            Field(*"x-foo", *"bar"),
           ]
         },
         body = *"Lorem ipsum",
@@ -26,7 +52,8 @@ define main(): unit {
       // configure how the request is performed
       Config of {
         host = "https://example.com",
-        // read the response body using a buffer with an initial size of 1024 bytes (doubling the size when necessary)
+        // read the response body using a buffer with an initial size of 1024 bytes
+        // (increasing the size when necessary)
         initial-buffer-size = 1024,
         options = {
           [
