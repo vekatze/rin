@@ -20,7 +20,7 @@ constant _empty-slist: _slist {
 inline _fold-left-maybe<elem-type, result-type>(
   acc: result-type,
   xs: list(elem-type),
-  consumer: (result-type, elem-type) -> ?result-type,
+  !consumer: (result-type, elem-type) -> ?result-type,
 ): ?result-type {
   let helper =
     define loop(acc, xs): ?result-type {
@@ -28,7 +28,7 @@ inline _fold-left-maybe<elem-type, result-type>(
       | Nil =>
         Right(acc)
       | Cons(y, ys) =>
-        try tmp = consumer(acc, y) in
+        try tmp = !consumer(acc, y) in
         loop(tmp, ys)
       }
     }
