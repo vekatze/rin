@@ -1,9 +1,10 @@
 import {
   binary-builder.entity {builder, create, get},
   binary-builder.scene {_get-head-ptr, _proceed},
+  core.c-string {from-c-string},
   core.external {free},
   core.memory {load-int},
-  core.text {_Text, _from-c-string, text-byte-length},
+  core.text {_Text, text-byte-length},
   core.word,
   http-base.field {Field},
   http-base.header {header},
@@ -68,8 +69,8 @@ define _read-all-headers(h: _handle, cursor: int): header {
   if eq-int(new-header, 0) {
     []
   } else {
-    let name = _from-c-string(magic external neut_rin_v0_1_get_header_name(new-header)) in
-    let value = _from-c-string(magic external neut_rin_v0_1_get_header_value(new-header)) in
+    let name = from-c-string(magic external neut_rin_v0_1_get_header_name(new-header)) in
+    let value = from-c-string(magic external neut_rin_v0_1_get_header_value(new-header)) in
     Cons(Field(name, value), _read-all-headers(h, new-header))
   }
 }

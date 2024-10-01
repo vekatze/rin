@@ -1,5 +1,5 @@
 import {
-  core.text {_from-c-string},
+  core.c-string {from-c-string},
 }
 
 data error {
@@ -15,8 +15,8 @@ foreign {
 define show-error(e: error): text {
   match e {
   | Curl-Error(c) =>
-    let str: int = magic external curl_easy_strerror(c) in
-    _from-c-string(str)
+    let str = magic external curl_easy_strerror(c) in
+    from-c-string(str)
   | Curl-Initialization-Error =>
     *"Failed to initialize libcurl"
   | Curl-Header-Construction-Error =>
