@@ -25,28 +25,28 @@
   },
   dependency {
     core {
-      digest "rSB7FsQwOMjYqO7Qa7VbJ-r__2Osc4jCHgydNavvwzU",
+      digest "6epYrE2wWOaerkYk7ZAqgjrZXWeDtOChgG5TgsOYBYs",
       mirror [
-        "https://github.com/vekatze/neut-core/raw/main/archive/0-50-26.tar.zst",
+        "https://github.com/vekatze/neut-core/raw/main/archive/0-50-27.tar.zst",
       ],
       enable-preset true,
     },
     http-base {
-      digest "FvSqx9sp34bxaC-qrRteLR68ruTeG2DOigHRHhn_SfA",
+      digest "fDKofjh4wnXjQThQ-KhrkVmcd5ud78BW3_uPNbMU_vQ",
       mirror [
-        "https://github.com/vekatze/http-base-nt/raw/main/archive/0-1-11.tar.zst",
+        "https://github.com/vekatze/http-base-nt/raw/main/archive/0-1-12.tar.zst",
       ],
     },
     path {
-      digest "JOGh2mTVS4dJ8ksIsA4eS0sudVZSNPVHZ6-IupMAX50",
+      digest "vZvw1UkpW7LjPA8D6evXVyEQrQAJoD81kFe25AED1_M",
       mirror [
-        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-8.tar.zst",
+        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-9.tar.zst",
       ],
     },
     binary-builder {
-      digest "MqqYZB-P44TFTKGwuA2IXQflbJmf5LRXtiEVpVwy66U",
+      digest "pt4ABF9WxqZ3-UP7Nx3JphgOW768T1HCrj9kLO_aKPQ",
       mirror [
-        "https://github.com/vekatze/binary-builder/raw/main/archive/0-1-8.tar.zst",
+        "https://github.com/vekatze/binary-builder/raw/main/archive/0-1-9.tar.zst",
       ],
     },
   },
