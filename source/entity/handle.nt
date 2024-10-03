@@ -1,5 +1,6 @@
 import {
   core.memory {load-int},
+  core.pointer {_Pointer},
   core.text {_get-content-pointer},
   this.context.foreign {CURL_GLOBAL_DEFAULT},
   this.context.rin {_wrap-curl-code, rin},
@@ -51,7 +52,7 @@ define _cleanup(h: _handle): unit {
 }
 
 define _curl_easy_getinfo(h: _handle, option: int): rin(int) {
-  let buffer: int = magic alloca(int, 1) in
+  let buffer = _Pointer(magic alloca(int, 1)) in
   let result = magic external curl_easy_getinfo(h, option)(buffer: int) in
   if eq-int(result, 0) {
     Right(load-int(buffer))

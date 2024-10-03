@@ -4,6 +4,7 @@ import {
   core.c-string {from-c-string},
   core.external {free},
   core.memory {load-int},
+  core.pointer {pointer, shift},
   core.text {_Text, text-byte-length},
   core.word,
   http-base.field {Field},
@@ -57,8 +58,8 @@ define _callback(ptr: int, size: int, nmemb: int, stream: &builder): int {
 }
 
 define _get-callback-label-ptr(): int {
-  let callback-ptr = magic cast(_, int, _callback) in
-  let callback-label-ptr = load-int(add-int(callback-ptr, mul-int(core.word.size, 2))) in
+  let callback-ptr = magic cast(_, pointer, _callback) in
+  let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2))) in
   free(callback-ptr);
   callback-label-ptr
 }
