@@ -1,5 +1,6 @@
 import {
-  core.text {_get-content-pointer, format},
+  core.c-string {to-c-string},
+  core.text {format},
   http-base.field {Field},
   http-base.header {header},
   this.context.rin {rin},
@@ -38,7 +39,7 @@ inline _fold-left-maybe<elem-type, result-type>(
 
 inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
   pin kv = format("{}: {}", [key, value]) in
-  let content = _get-content-pointer(kv) in
+  pin content = to-c-string(kv) in
   let result = magic external curl_slist_append(slist-ptr, content) in
   if eq-int(result, 0) {
     none()

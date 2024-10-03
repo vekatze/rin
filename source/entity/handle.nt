@@ -1,7 +1,7 @@
 import {
+  core.c-string {to-c-string},
   core.memory {load-int},
   core.pointer {_Pointer},
-  core.text {_get-content-pointer},
   this.context.foreign {CURL_GLOBAL_DEFAULT},
   this.context.rin {_wrap-curl-code, rin},
   this.entity.error {Curl-Error, Curl-Initialization-Error},
@@ -81,8 +81,8 @@ define _curl_easy_setopt_bool(h: _handle, option: int, parameter: bool): rin(uni
 }
 
 define _curl_easy_setopt_text(h: _handle, option: int, parameter: &text): rin(unit) {
-  let content = _get-content-pointer(parameter) in
-  let code = magic external curl_easy_setopt(h, option)(content: int) in
+  pin content = to-c-string(parameter) in
+  let code = magic external curl_easy_setopt(h, option)(content: pointer) in
   _wrap-curl-code(code, Unit)
 }
 
