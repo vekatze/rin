@@ -2,6 +2,12 @@
 
 `rin` is a libcurl-based HTTP client library for the [Neut](https://vekatze.github.io/neut/) programming language.
 
+## Installation
+
+```sh
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-5.tar.zst
+```
+
 ## Prerequisites
 
 Install `libcurl` on your machine (if not exists) and add something like the below to your `module.ens`:
