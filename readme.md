@@ -10,7 +10,7 @@ neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-5.tar.zst
 
 ## Prerequisites
 
-Install `libcurl` on your machine (if not exists) and add something like the below to your `module.ens`:
+Install `libcurl` on your machine and add something like the below to your app's `module.ens`:
 
 ```ens
 {
@@ -18,17 +18,19 @@ Install `libcurl` on your machine (if not exists) and add something like the bel
   target {
     test {
       main "test.nt",
-      // ↓ this
+      // ↓ add
       build-option [
         "$(pkg-config libcurl --libs --cflags)",
       ],
+      // ↑ add
     },
   },
   zen {
-    // ↓ this
+    // ↓ add
     build-option [
       "$(pkg-config libcurl --libs --cflags)",
     ],
+    // ↑ add
   },
   // ..
 }
