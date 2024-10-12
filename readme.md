@@ -12,7 +12,7 @@ Install `pkg-config` and `libcurl`. On Debian and Ubuntu, for example, you can i
 apt install libcurl4-openssl-dev pkg-config
 ```
 
-### Add the Module to Your App
+### Add This Module to Your App
 
 Install this module as usual:
 
