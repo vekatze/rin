@@ -4,13 +4,25 @@
 
 ## Installation
 
+### Install Prerequisites
+
+Install `pkg-config` and `libcurl`. On Debian and Ubuntu, for example, you can install them as follows:
+
+```sh
+apt install libcurl4-openssl-dev pkg-config
+```
+
+### Add the Module to Your App
+
+Install this module as usual:
+
 ```sh
 neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-5.tar.zst
 ```
 
-## Prerequisites
+### Configure Your App
 
-Install `libcurl` on your machine and add something like the below to your app's `module.ens`:
+Add something like the following to your app's `module.ens`:
 
 ```ens
 {
@@ -34,6 +46,38 @@ Install `libcurl` on your machine and add something like the below to your app's
   },
   // ..
 }
+```
+
+## Types
+
+```neut
+// Performs a request.
+define perform(req: request, c: config): either(error, response)
+
+// A configuration for a request.
+data config {
+| Config(
+    host: &text,
+    initial-buffer-size: int,
+    options: list(option),
+  )
+}
+
+// Possible options when performing a request.
+data option {
+| Follow-Location(bool)
+| Timeout(int)
+}
+
+// The type of errors in `rin`.
+data error {
+| Curl-Error(error-code: int)
+| Curl-Initialization-Error
+| Curl-Header-Construction-Error
+}
+
+// Converts errors into human-readable texts.
+define show-error(e: error): text
 ```
 
 ## Example
