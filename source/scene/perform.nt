@@ -1,10 +1,10 @@
 import {
   binary-builder.entity {builder, create, get},
   binary-builder.scene {_get-head-ptr, _proceed},
-  core.c-string {from-c-string},
+  core.c-string {c-string, from-c-string, to-c-string},
   core.external {free},
   core.memory {load-int},
-  core.pointer {pointer, shift},
+  core.pointer {null-pointer, shift},
   core.text {_Text, text-byte-length},
   core.word,
   http-base.field {Field},
@@ -43,16 +43,15 @@ import {
 
 foreign {
   llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1): void,
-  curl_easy_nextheader(pointer, int, int, pointer): pointer,
+  curl_easy_nextheader(_handle, int, int, pointer): pointer,
   neut_rin_v0_1_get_header_name(pointer): pointer,
   neut_rin_v0_1_get_header_value(pointer): pointer,
 }
 
-define _callback(ptr: int, size: int, nmemb: int, stream: &builder): int {
+define _callback(ptr: pointer, size: int, nmemb: int, stream: &builder): int {
   let total-size = mul-int(size, nmemb) in
   let content-head-ptr = _get-head-ptr(stream, total-size) in
-  let zero: int = 0 in
-  magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, zero);
+  let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0) in
   _proceed(stream, total-size);
   total-size
 }
@@ -64,14 +63,26 @@ define _get-callback-label-ptr(): int {
   callback-label-ptr
 }
 
-define _read-all-headers(h: _handle, cursor: int): header {
+define _read-all-headers(h: _handle, cursor: pointer): header {
   let last: int = -1 in
   let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor) in
-  if eq-int(new-header, 0) {
+  if eq-int(magic cast(pointer, int, new-header), 0) {
     []
   } else {
-    let name = from-c-string(magic external neut_rin_v0_1_get_header_name(new-header)) in
-    let value = from-c-string(magic external neut_rin_v0_1_get_header_value(new-header)) in
+    let name =
+      from-c-string(magic cast(
+        pointer,
+        &c-string,
+        magic external neut_rin_v0_1_get_header_name(new-header),
+      ))
+    in
+    let value =
+      from-c-string(magic cast(
+        pointer,
+        &c-string,
+        magic external neut_rin_v0_1_get_header_value(new-header),
+      ))
+    in
     Cons(Field(name, value), _read-all-headers(h, new-header))
   }
 }
@@ -97,15 +108,20 @@ define perform(req: request, c: config): rin(response) {
     let Config of {host, initial-buffer-size, options} = c in
     try _ = _interpret-options(h, options) in
     let Request of {method, path, fields, body} = req in
-    let url on path = path.path.append(host, path) in
+    let url on path =
+      pin tmp = path.path.append(host, path) in
+      to-c-string(tmp)
+    in
     pin url = url in
+    pin body = body in
+    pin body-parameter = to-c-string(body) in
     try _ = _curl_easy_setopt_text(h, CURLOPT_URL, url) in
     pin method' = show-request-method(method) in
-    try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method') in
+    pin method-parameter = to-c-string(method') in
+    try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method-parameter) in
     _with-header(fields, function (slist) {
       try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist)) in
-      pin body = body in
-      try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body) in
+      try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body-parameter) in
       try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body)) in
       let callback-label-ptr = _get-callback-label-ptr() in
       let body-buffer = create(initial-buffer-size) in
@@ -113,7 +129,7 @@ define perform(req: request, c: config): rin(response) {
       try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr) in
       try _ = _curl_easy_perform(h) in
       try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE) in
-      let fields = _read-all-headers(h, 0) in
+      let fields = _read-all-headers(h, null-pointer) in
       let body = _Text(get(body-buffer)) in
       Right(
         Response of {

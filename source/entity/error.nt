@@ -1,22 +1,26 @@
 import {
-  core.c-string {from-c-string},
+  core.c-string {c-string, from-c-string},
+}
+
+data _curl-code {
+| Curl-Code(int)
 }
 
 data error {
-| Curl-Error(error-code: int)
+| Curl-Error(error-code: _curl-code)
 | Curl-Initialization-Error
 | Curl-Header-Construction-Error
 }
 
 foreign {
-  curl_easy_strerror(int): pointer,
+  curl_easy_strerror(_curl-code): pointer,
 }
 
 define show-error(e: error): text {
   match e {
   | Curl-Error(c) =>
     let str = magic external curl_easy_strerror(c) in
-    from-c-string(str)
+    from-c-string(magic cast(pointer, &c-string, str))
   | Curl-Initialization-Error =>
     *"Failed to initialize libcurl"
   | Curl-Header-Construction-Error =>

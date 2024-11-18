@@ -1,5 +1,6 @@
 import {
-  core.c-string {to-c-string},
+  core.c-string {c-string, to-c-string},
+  core.magic,
   core.text {format},
   http-base.field {Field},
   http-base.header {header},
@@ -7,12 +8,14 @@ import {
   this.entity.error {Curl-Header-Construction-Error, error},
 }
 
-foreign {
-  curl_slist_append(pointer, pointer): pointer,
-  curl_slist_free_all(pointer): void,
+data _slist {
+| _Slist(pointer)
 }
 
-data _slist {}
+foreign {
+  curl_slist_append(_slist, pointer): pointer,
+  curl_slist_free_all(_slist): void,
+}
 
 constant _empty-slist: _slist {
   magic cast(int, _slist, 0)
@@ -40,11 +43,13 @@ inline _fold-left-maybe<elem-type, result-type>(
 inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
   pin kv = format("{}: {}", [key, value]) in
   pin content = to-c-string(kv) in
+  // let content = magic cast(&c-string, pointer, content) in
+  let content = core.magic.cast(&c-string, pointer, content) in
   let result = magic external curl_slist_append(slist-ptr, content) in
-  if eq-int(result, 0) {
+  if eq-int(magic cast(pointer, int, result), 0) {
     none()
   } else {
-    Right(magic cast(int, _slist, result))
+    Right(magic cast(pointer, _slist, result))
   }
 }
 
@@ -56,7 +61,8 @@ define _make-slist-maybe(fields: header): ?_slist {
 }
 
 define _slist-free(slist-ptr: _slist): unit {
-  magic external curl_slist_free_all(slist-ptr)
+  let _ = magic external curl_slist_free_all(slist-ptr) in
+  Unit
 }
 
 define _lift-none<a>(e: ?a): either(error, a) {

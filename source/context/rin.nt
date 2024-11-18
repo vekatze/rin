@@ -1,13 +1,13 @@
 import {
-  this.entity.error {Curl-Error, error},
+  this.entity.error {Curl-Error, _curl-code, error},
 }
 
 inline rin(a: type): type {
   either(error, a)
 }
 
-inline _wrap-curl-code<a>(code: int, result: a): rin(a) {
-  if eq-int(code, 0) {
+inline _wrap-curl-code<a>(code: _curl-code, result: a): rin(a) {
+  if eq-int(magic cast(_curl-code, int, code), 0) {
     Right(result)
   } else {
     Left(Curl-Error(code))
