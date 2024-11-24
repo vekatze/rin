@@ -94,12 +94,14 @@ define _curl_easy_perform(h: _handle): rin(unit) {
 
 inline _with-handle<a>(callback: (_handle) -> rin(a)): rin(a) {
   try _ = _global-init() in
-  try h = _init() in
-  try result =
-    let tmp = callback(h) in
+  match _init() {
+  | Left(e) =>
+    _global_cleanup();
+    Left(e)
+  | Right(h) =>
+    let result = callback(h) in
     _cleanup(h);
     _global_cleanup();
-    tmp
-  in
-  Right(result)
+    result
+  }
 }

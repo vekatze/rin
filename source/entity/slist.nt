@@ -40,6 +40,11 @@ inline _fold-left-maybe<elem-type, result-type>(
   helper(acc, xs)
 }
 
+define _slist-free(slist-ptr: _slist): unit {
+  let _ = magic external curl_slist_free_all(slist-ptr) in
+  Unit
+}
+
 inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
   pin kv = format("{}: {}", [key, value]) in
   pin content = to-c-string(kv) in
@@ -47,6 +52,7 @@ inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
   let content = core.magic.cast(&c-string, pointer, content) in
   let result = magic external curl_slist_append(slist-ptr, content) in
   if eq-int(magic cast(pointer, int, result), 0) {
+    _slist-free(slist-ptr);
     none()
   } else {
     Right(magic cast(pointer, _slist, result))
@@ -60,11 +66,6 @@ define _make-slist-maybe(fields: header): ?_slist {
   })
 }
 
-define _slist-free(slist-ptr: _slist): unit {
-  let _ = magic external curl_slist_free_all(slist-ptr) in
-  Unit
-}
-
 define _lift-none<a>(e: ?a): either(error, a) {
   match e {
   | Right(v) =>
@@ -76,7 +77,7 @@ define _lift-none<a>(e: ?a): either(error, a) {
 
 define _with-header<a>(fields: header, callback: (_slist) -> rin(a)): rin(a) {
   try slist = _lift-none(_make-slist-maybe(fields)) in
-  try result = callback(slist) in
+  let result = callback(slist) in
   _slist-free(slist);
-  Right(result)
+  result
 }
