@@ -4,7 +4,7 @@
       main "test.nt",
       build-option [
         "$(pkg-config libcurl --libs --cflags)",
-        // AddressSanitizer should report memory errors in `curl_global_init`
+        // AddressSanitizer might report memory leaks in `curl_global_init` on macOS
         // (cf. https://stackoverflow.com/a/37770799)
         "-fsanitize=address",
       ],
