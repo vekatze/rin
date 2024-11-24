@@ -3,6 +3,7 @@ import {
   binary-builder.scene {_get-head-ptr, _proceed},
   core.c-string {c-string, from-c-string, to-c-string},
   core.external {free},
+  core.magic,
   core.memory {load-int},
   core.pointer {null-pointer, shift},
   core.text {_Text, text-byte-length},
@@ -57,7 +58,7 @@ define _callback(ptr: pointer, size: int, nmemb: int, stream: &builder): int {
 }
 
 define _get-callback-label-ptr(): int {
-  let callback-ptr = magic cast(_, pointer, _callback) in
+  let callback-ptr = core.magic.cast(_, pointer, _callback) in
   let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2))) in
   free(callback-ptr);
   callback-label-ptr
