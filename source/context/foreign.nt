@@ -16,62 +16,92 @@ foreign {
   neut_rin_v0_1_CURLE_OK(): int,
 }
 
-constant CURL_GLOBAL_DEFAULT: int {
-  magic external neut_rin_v0_1_CURL_GLOBAL_DEFAULT()
+inline CURL_GLOBAL_DEFAULT: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURL_GLOBAL_DEFAULT()
+  }
 }
 
-constant CURLH_HEADER: int {
-  magic external neut_rin_v0_1_CURLH_HEADER()
+inline CURLH_HEADER: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLH_HEADER()
+  }
 }
 
-constant CURLINFO_RESPONSE_CODE: int {
-  magic external neut_rin_v0_1_CURLINFO_RESPONSE_CODE()
+inline CURLINFO_RESPONSE_CODE: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLINFO_RESPONSE_CODE()
+  }
 }
 
-constant CURLOPT_CUSTOMREQUEST: int {
-  magic external neut_rin_v0_1_CURLOPT_CUSTOMREQUEST()
+inline CURLOPT_CUSTOMREQUEST: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_CUSTOMREQUEST()
+  }
 }
 
-constant CURLOPT_FOLLOWLOCATION: int {
-  magic external neut_rin_v0_1_CURLOPT_FOLLOWLOCATION()
+inline CURLOPT_FOLLOWLOCATION: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_FOLLOWLOCATION()
+  }
 }
 
-constant CURLOPT_HTTPHEADER: int {
-  magic external neut_rin_v0_1_CURLOPT_HTTPHEADER()
+inline CURLOPT_HTTPHEADER: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_HTTPHEADER()
+  }
 }
 
-constant CURLOPT_POSTFIELDS: int {
-  magic external neut_rin_v0_1_CURLOPT_POSTFIELDS()
+inline CURLOPT_POSTFIELDS: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_POSTFIELDS()
+  }
 }
 
-constant CURLOPT_POSTFIELDSIZE: int {
-  magic external neut_rin_v0_1_CURLOPT_POSTFIELDSIZE()
+inline CURLOPT_POSTFIELDSIZE: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_POSTFIELDSIZE()
+  }
 }
 
-constant CURLOPT_TIMEOUT: int {
-  magic external neut_rin_v0_1_CURLOPT_TIMEOUT()
+inline CURLOPT_TIMEOUT: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_TIMEOUT()
+  }
 }
 
-constant CURLOPT_URL: int {
-  magic external neut_rin_v0_1_CURLOPT_URL()
+inline CURLOPT_URL: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_URL()
+  }
 }
 
-constant CURLOPT_WRITEFUNCTION: int {
-  magic external neut_rin_v0_1_CURLOPT_WRITEFUNCTION()
+inline CURLOPT_WRITEFUNCTION: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_WRITEFUNCTION()
+  }
 }
 
-constant CURLOPT_WRITEDATA: int {
-  magic external neut_rin_v0_1_CURLOPT_WRITEDATA()
+inline CURLOPT_WRITEDATA: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_WRITEDATA()
+  }
 }
 
-constant CURLOPT_HEADERFUNCTION: int {
-  magic external neut_rin_v0_1_CURLOPT_HEADERFUNCTION()
+inline CURLOPT_HEADERFUNCTION: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_HEADERFUNCTION()
+  }
 }
 
-constant CURLOPT_HEADERDATA: int {
-  magic external neut_rin_v0_1_CURLOPT_HEADERDATA()
+inline CURLOPT_HEADERDATA: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLOPT_HEADERDATA()
+  }
 }
 
-constant CURLE_OK: int {
-  magic external neut_rin_v0_1_CURLE_OK()
+inline CURLE_OK: int {
+  magic opaque-value {
+    magic external neut_rin_v0_1_CURLE_OK()
+  }
 }

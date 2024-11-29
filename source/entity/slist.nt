@@ -17,7 +17,7 @@ foreign {
   curl_slist_free_all(_slist): void,
 }
 
-constant _empty-slist: _slist {
+inline _empty-slist: _slist {
   magic cast(int, _slist, 0)
 }
 
@@ -53,7 +53,7 @@ inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
   let result = magic external curl_slist_append(slist-ptr, content) in
   if eq-int(magic cast(pointer, int, result), 0) {
     _slist-free(slist-ptr);
-    none()
+    none
   } else {
     Right(magic cast(pointer, _slist, result))
   }
