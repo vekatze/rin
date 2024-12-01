@@ -17,7 +17,7 @@ apt install libcurl4-openssl-dev pkg-config
 Install this module as usual:
 
 ```sh
-neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-14.tar.zst
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-15.tar.zst
 ```
 
 ### Configure Your App
@@ -52,7 +52,7 @@ Add something like the following to your app's `module.ens`:
 
 ```neut
 // Performs a request.
-define perform(req: request, c: config): either(error, response)
+define perform(req: request, c: config): except(error, response)
 
 // A configuration for a request.
 data config {
@@ -82,7 +82,7 @@ define show-error(e: error): text
 
 ## Example
 
-The main interface of `rin` is `perform: (request, config) -> either(error, response)`:
+The main interface of `rin` is `perform: (request, config) -> except(error, response)`:
 
 ```neut
 define main(): unit {
@@ -117,10 +117,10 @@ define main(): unit {
     )
   in
   match result {
-  | Right(response) =>
+  | OK(response) =>
     let Response of {status-code, body, fields} = response in
     printf("success:\n{}\n", [body])
-  | Left(e) =>
+  | Error(e) =>
     printf("failure:\n{}\n", [show-error(e)])
   }
 }
