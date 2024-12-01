@@ -30,7 +30,7 @@ inline _fold-left-maybe<elem-type, result-type>(
     define loop(acc, xs): ?result-type {
       match xs {
       | Nil =>
-        Right(acc)
+        OK(acc)
       | Cons(y, ys) =>
         try tmp = !consumer(acc, y) in
         loop(tmp, ys)
@@ -55,7 +55,7 @@ inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
     _slist-free(slist-ptr);
     none
   } else {
-    Right(magic cast(pointer, _slist, result))
+    OK(magic cast(pointer, _slist, result))
   }
 }
 
@@ -66,12 +66,12 @@ define _make-slist-maybe(fields: header): ?_slist {
   })
 }
 
-define _lift-none<a>(e: ?a): either(error, a) {
+define _lift-none<a>(e: ?a): except(error, a) {
   match e {
-  | Right(v) =>
-    Right(v)
-  | Left(_) =>
-    Left(Curl-Header-Construction-Error)
+  | OK(v) =>
+    OK(v)
+  | Error(_) =>
+    Error(Curl-Header-Construction-Error)
   }
 }
 
