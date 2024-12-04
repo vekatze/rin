@@ -52,7 +52,7 @@ Add something like the following to your app's `module.ens`:
 
 ```neut
 // Performs a request.
-define perform(req: request, c: config): except(error, response)
+define perform(req: request, c: config): either(error, response)
 
 // A configuration for a request.
 data config {
@@ -82,7 +82,7 @@ define show-error(e: error): text
 
 ## Example
 
-The main interface of `rin` is `perform: (request, config) -> except(error, response)`:
+The main interface of `rin` is `perform: (request, config) -> either(error, response)`:
 
 ```neut
 define main(): unit {
@@ -117,10 +117,10 @@ define main(): unit {
     )
   in
   match result {
-  | OK(response) =>
+  | Right(response) =>
     let Response of {status-code, body, fields} = response in
     printf("success:\n{}\n", [body])
-  | Error(e) =>
+  | Left(e) =>
     printf("failure:\n{}\n", [show-error(e)])
   }
 }

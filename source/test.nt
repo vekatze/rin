@@ -39,12 +39,12 @@ define main(): unit {
     )
   in
   match result {
-  | OK(response) =>
+  | Right(response) =>
     let Response of {status-code, body, fields} = response in
     printf("success:\n{}\n", [body]);
     printf("header:\n{}\n", [show-header(fields)]);
     printf("status-code:\n{}\n", [show-int(status-code)])
-  | Error(e) =>
+  | Left(e) =>
     printf("failure: {}\n", [show-error(e)])
   }
 }

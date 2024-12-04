@@ -3,13 +3,13 @@ import {
 }
 
 inline rin(a: type): type {
-  except(error, a)
+  either(error, a)
 }
 
 inline _wrap-curl-code<a>(code: _curl-code, result: a): rin(a) {
   if eq-int(magic cast(_curl-code, int, code), 0) {
-    OK(result)
+    Right(result)
   } else {
-    Error(Curl-Error(code))
+    Left(Curl-Error(code))
   }
 }

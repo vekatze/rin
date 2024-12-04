@@ -41,9 +41,9 @@ define _global_cleanup(): unit {
 define _init(): rin(_handle) {
   let result = _curl_easy_init() in
   if eq-int(magic cast(pointer, int, result), 0) {
-    Error(Curl-Initialization-Error)
+    Left(Curl-Initialization-Error)
   } else {
-    OK(magic cast(pointer, _handle, result))
+    Right(magic cast(pointer, _handle, result))
   }
 }
 
@@ -56,9 +56,9 @@ define _curl_easy_getinfo(h: _handle, option: int): rin(int) {
   let buffer = magic alloca(int, 1) in
   let result = magic external curl_easy_getinfo(h, option)(buffer: pointer) in
   if eq-int(magic cast(_curl-code, int, result), 0) {
-    OK(load-int(buffer))
+    Right(load-int(buffer))
   } else {
-    Error(Curl-Error(result))
+    Left(Curl-Error(result))
   }
 }
 
@@ -95,10 +95,10 @@ define _curl_easy_perform(h: _handle): rin(unit) {
 inline _with-handle<a>(callback: (_handle) -> rin(a)): rin(a) {
   try _ = _global-init() in
   match _init() {
-  | Error(e) =>
+  | Left(e) =>
     _global_cleanup();
-    Error(e)
-  | OK(h) =>
+    Left(e)
+  | Right(h) =>
     let result = callback(h) in
     _cleanup(h);
     _global_cleanup();
