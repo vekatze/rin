@@ -89,39 +89,43 @@ define main(): unit {
   let result =
     // the function `perform` performs an HTTP request
     perform(
-      // construct the request
       Request of {
-        method = POST,
-        path = *"/path/to/something",
-        fields = {
+        method := GET,
+        path := *"/",
+        fields := {
           [
+            Field(*"My-Field", *"hoge"),
             Field(*"Content-Type", *"application/json"),
-            Field(*"x-foo", *"bar"),
+            Field(*"x-my-extension", *"Bearer 1234567890"),
           ]
         },
-        body = *"Lorem ipsum",
+        body := *"Lorem ipsum",
       },
       // configure how the request is performed
       Config of {
-        host = "https://example.com",
+        host := "http://localhost:8080",
         // read the response body using a buffer with an initial size of 1024 bytes
         // (increasing the size when necessary)
-        initial-buffer-size = 1024,
-        options = {
+        initial-buffer-size := 1024,
+        options := {
           [
             Follow-Location(True),
-            Timeout(123),
+            Timeout(2),
           ]
         },
       },
-    )
-  in
+    );
   match result {
   | Right(response) =>
-    let Response of {status-code, body, fields} = response in
-    printf("success:\n{}\n", [body])
+    let Response of {status-code, body, fields} = response;
+    pin body = body;
+    print-line("success:");
+    print-line(body);
+    print-line("header:");
   | Left(e) =>
-    printf("failure:\n{}\n", [show-error(e)])
+    pin error = show-error(e);
+    print("failure: ");
+    print-line(error);
   }
 }
 ```

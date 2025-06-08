@@ -29,17 +29,17 @@ define _curl_easy_init(): pointer {
 }
 
 define _global-init(): rin(unit) {
-  let code = _curl_global_init(CURL_GLOBAL_DEFAULT) in
+  let code = _curl_global_init(CURL_GLOBAL_DEFAULT);
   _wrap-curl-code(code, Unit)
 }
 
 define _global_cleanup(): unit {
-  let _ = magic external curl_global_cleanup() in
+  let _ = magic external curl_global_cleanup();
   Unit
 }
 
 define _init(): rin(_handle) {
-  let result = _curl_easy_init() in
+  let result = _curl_easy_init();
   if eq-int(magic cast(pointer, int, result), 0) {
     Left(Curl-Initialization-Error)
   } else {
@@ -48,13 +48,13 @@ define _init(): rin(_handle) {
 }
 
 define _cleanup(h: _handle): unit {
-  let _ = magic external curl_easy_cleanup(h) in
+  let _ = magic external curl_easy_cleanup(h);
   Unit
 }
 
 define _curl_easy_getinfo(h: _handle, option: int): rin(int) {
-  let buffer = magic alloca(int, 1) in
-  let result = magic external curl_easy_getinfo(h, option)(buffer: pointer) in
+  let buffer = magic alloca(int, 1);
+  let result = magic external curl_easy_getinfo(h, option)(buffer: pointer);
   if eq-int(magic cast(_curl-code, int, result), 0) {
     Right(load-int(buffer))
   } else {
@@ -63,7 +63,7 @@ define _curl_easy_getinfo(h: _handle, option: int): rin(int) {
 }
 
 define _curl_easy_setopt(h: _handle, option: int, parameter: int): rin(unit) {
-  let code = magic external curl_easy_setopt(h, option)(parameter: int) in
+  let code = magic external curl_easy_setopt(h, option)(parameter: int);
   _wrap-curl-code(code, Unit)
 }
 
@@ -76,30 +76,30 @@ define _bool-to-int(b: bool): int {
 }
 
 define _curl_easy_setopt_bool(h: _handle, option: int, parameter: bool): rin(unit) {
-  let content = _bool-to-int(parameter) in
-  let code = magic external curl_easy_setopt(h, option)(content: int) in
+  let content = _bool-to-int(parameter);
+  let code = magic external curl_easy_setopt(h, option)(content: int);
   _wrap-curl-code(code, Unit)
 }
 
 define _curl_easy_setopt_text(h: _handle, option: int, parameter: &c-string): rin(unit) {
-  let parameter = magic cast(&c-string, pointer, parameter) in
-  let code = magic external curl_easy_setopt(h, option)(parameter: pointer) in
+  let parameter = magic cast(&c-string, pointer, parameter);
+  let code = magic external curl_easy_setopt(h, option)(parameter: pointer);
   _wrap-curl-code(code, Unit)
 }
 
 define _curl_easy_perform(h: _handle): rin(unit) {
-  let code = magic external curl_easy_perform(h) in
+  let code = magic external curl_easy_perform(h);
   _wrap-curl-code(code, Unit)
 }
 
 inline _with-handle<a>(callback: (_handle) -> rin(a)): rin(a) {
-  try _ = _global-init() in
+  try _ = _global-init();
   match _init() {
   | Left(e) =>
     _global_cleanup();
     Left(e)
   | Right(h) =>
-    let result = callback(h) in
+    let result = callback(h);
     _cleanup(h);
     _global_cleanup();
     result

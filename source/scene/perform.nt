@@ -52,23 +52,23 @@ foreign {
 }
 
 define _callback(ptr: pointer, size: int, nmemb: int, stream: &builder): int {
-  let total-size = mul-int(size, nmemb) in
-  let content-head-ptr = _get-head-ptr(stream, total-size) in
-  let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0) in
+  let total-size = mul-int(size, nmemb);
+  let content-head-ptr = _get-head-ptr(stream, total-size);
+  let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0);
   _proceed(stream, total-size);
   total-size
 }
 
 define _get-callback-label-ptr(): int {
-  let callback-ptr = core.magic.cast(_, pointer, _callback) in
-  let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2))) in
+  let callback-ptr = core.magic.cast(_, pointer, _callback);
+  let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2)));
   free(callback-ptr);
   callback-label-ptr
 }
 
 define _read-all-headers(h: _handle, cursor: pointer): header {
-  let last: int = -1 in
-  let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor) in
+  let last: int = -1;
+  let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor);
   if eq-int(magic cast(pointer, int, new-header), 0) {
     []
   } else {
@@ -77,15 +77,13 @@ define _read-all-headers(h: _handle, cursor: pointer): header {
         pointer,
         &c-string,
         magic external neut_rin_v0_1_get_header_name(new-header),
-      ))
-    in
+      ));
     let value =
       from-c-string(magic cast(
         pointer,
         &c-string,
         magic external neut_rin_v0_1_get_header_value(new-header),
-      ))
-    in
+      ));
     Cons(Field(name, value), _read-all-headers(h, new-header))
   }
 }
@@ -97,10 +95,10 @@ define _interpret-options(h: _handle, options: list(option)): rin(unit) {
   | Cons(o, rest) =>
     match o {
     | Follow-Location(b) =>
-      try _ = _curl_easy_setopt_bool(h, CURLOPT_FOLLOWLOCATION, b) in
+      try _ = _curl_easy_setopt_bool(h, CURLOPT_FOLLOWLOCATION, b);
       _interpret-options(h, rest)
     | Timeout(x) =>
-      try _ = _curl_easy_setopt(h, CURLOPT_TIMEOUT, x) in
+      try _ = _curl_easy_setopt(h, CURLOPT_TIMEOUT, x);
       _interpret-options(h, rest)
     }
   }
@@ -108,33 +106,33 @@ define _interpret-options(h: _handle, options: list(option)): rin(unit) {
 
 define perform(req: request, c: config): rin(response) {
   _with-handle(function (h) {
-    let Config of {host, initial-buffer-size, options} = c in
-    try _ = _interpret-options(h, options) in
-    let Request of {method, path, fields, body} = req in
-    pin path = path in
-    let url =
-      pin tmp = path.path.append(host, path) in
+    let Config of {host, initial-buffer-size, options} = c;
+    try _ = _interpret-options(h, options);
+    let Request of {method, path, fields, body} = req;
+    pin path = path;
+    let url = {
+      pin tmp = path.path.append(host, path);
       to-c-string(tmp)
-    in
-    pin url = url in
-    pin body = body in
-    pin body-parameter = to-c-string(body) in
-    try _ = _curl_easy_setopt_text(h, CURLOPT_URL, url) in
-    pin method' = show-request-method(method) in
-    pin method-parameter = to-c-string(method') in
-    try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method-parameter) in
+    };
+    pin url = url;
+    pin body = body;
+    pin body-parameter = to-c-string(body);
+    try _ = _curl_easy_setopt_text(h, CURLOPT_URL, url);
+    pin method' = show-request-method(method);
+    pin method-parameter = to-c-string(method');
+    try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method-parameter);
     _with-header(fields, function (slist) {
-      try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist)) in
-      try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body-parameter) in
-      try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body)) in
-      let callback-label-ptr = _get-callback-label-ptr() in
-      let body-buffer = make-builder(initial-buffer-size) in
-      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&builder, int, body-buffer)) in
-      try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr) in
-      try _ = _curl_easy_perform(h) in
-      try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE) in
-      let fields = _read-all-headers(h, null-pointer) in
-      let body = _Text(extract(body-buffer)) in
+      try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist));
+      try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body-parameter);
+      try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body));
+      let callback-label-ptr = _get-callback-label-ptr();
+      let body-buffer = make-builder(initial-buffer-size);
+      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&builder, int, body-buffer));
+      try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr);
+      try _ = _curl_easy_perform(h);
+      try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE);
+      let fields = _read-all-headers(h, null-pointer);
+      let body = _Text(extract(body-buffer));
       Right(
         Response of {
           status-code,

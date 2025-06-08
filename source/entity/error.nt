@@ -19,7 +19,7 @@ foreign {
 define show-error(e: error): text {
   match e {
   | Curl-Error(c) =>
-    let str = magic external curl_easy_strerror(c) in
+    let str = magic external curl_easy_strerror(c);
     from-c-string(magic cast(pointer, &c-string, str))
   | Curl-Initialization-Error =>
     *"Failed to initialize libcurl"

@@ -13,8 +13,8 @@ data config {
 define default-config(host: &text): config {
   Config of {
     host,
-    initial-buffer-size = 1024,
-    options = {
+    initial-buffer-size := 1024,
+    options := {
       [
         Follow-Location(True),
       ]
