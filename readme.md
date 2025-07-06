@@ -17,7 +17,7 @@ apt install libcurl4-openssl-dev pkg-config
 Install this module as usual:
 
 ```sh
-neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-28.tar.zst
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-29.tar.zst
 ```
 
 ### Configure Your App
