@@ -19,7 +19,7 @@ define main(): unit {
         method := GET,
         path := *"/",
         fields := {
-          [
+          List[
             Field(*"My-Field", *"hoge"),
             Field(*"Content-Type", *"application/json"),
             Field(*"x-my-extension", *"Bearer 1234567890"),
@@ -31,7 +31,7 @@ define main(): unit {
         host := "http://localhost:8080",
         initial-buffer-size := 1024,
         options := {
-          [
+          List[
             Follow-Location(True),
             Timeout(2),
           ]

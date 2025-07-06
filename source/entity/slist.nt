@@ -45,7 +45,7 @@ define _slist-free(slist-ptr: _slist): unit {
 }
 
 inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text): ?_slist {
-  pin kv = format("{}: {}", [key, value]);
+  pin kv = format("{}: {}", List[key, value]);
   pin content = to-c-string(kv);
   // let content = magic cast(&c-string, pointer, content);
   let content = core.magic.cast(&c-string, pointer, content);

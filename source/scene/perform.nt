@@ -70,7 +70,7 @@ define _read-all-headers(h: _handle, cursor: pointer): header {
   let last: int = -1;
   let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor);
   if eq-int(magic cast(pointer, int, new-header), 0) {
-    []
+    Nil
   } else {
     let name =
       from-c-string(magic cast(

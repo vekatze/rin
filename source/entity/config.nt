@@ -15,7 +15,7 @@ define default-config(host: &text): config {
     host,
     initial-buffer-size := 1024,
     options := {
-      [
+      List[
         Follow-Location(True),
       ]
     },
