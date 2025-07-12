@@ -9,7 +9,7 @@ import {
   this.entity.config {Config},
   this.entity.error {show-error},
   this.entity.option {Follow-Location, Timeout},
-  this.scene.perform {perform},
+  this.perform {perform},
 }
 
 define main(): unit {
