@@ -1,8 +1,8 @@
 import {
-  binary-builder.move.append {_get-head-ptr, _proceed},
-  binary-builder.move.extract {extract},
-  binary-builder.move.make-builder {make-builder},
-  binary-builder.rule.builder {builder},
+  binary-builder.append {_get-head-ptr, _proceed},
+  binary-builder.builder {builder},
+  binary-builder.extract {extract},
+  binary-builder.make-builder {make-builder},
   core.c-string {c-string, from-c-string, to-c-string},
   core.external {free},
   core.magic,
