@@ -1,8 +1,5 @@
 import {
-  binary-builder.append {_get-head-ptr, _proceed},
-  binary-builder.builder {builder},
-  binary-builder.extract {extract},
-  binary-builder.make-builder {make-builder},
+  core.binary-builder {_get-head-ptr, _proceed, binary-builder, extract, make-binary-builder},
   core.c-string {c-string, from-c-string, to-c-string},
   core.external {free},
   core.magic,
@@ -51,7 +48,7 @@ foreign {
   neut_rin_v0_1_get_header_value(pointer): pointer,
 }
 
-define _callback(ptr: pointer, size: int, nmemb: int, stream: &builder): int {
+define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder): int {
   let total-size = mul-int(size, nmemb);
   let content-head-ptr = _get-head-ptr(stream, total-size);
   let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0);
@@ -126,8 +123,8 @@ define perform(req: request, c: config): rin(response) {
       try _ = _curl_easy_setopt_text(h, CURLOPT_POSTFIELDS, body-parameter);
       try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, text-byte-length(body));
       let callback-label-ptr = _get-callback-label-ptr();
-      let body-buffer = make-builder(initial-buffer-size);
-      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&builder, int, body-buffer));
+      let body-buffer = make-binary-builder(initial-buffer-size);
+      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&binary-builder, int, body-buffer));
       try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr);
       try _ = _curl_easy_perform(h);
       try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE);
