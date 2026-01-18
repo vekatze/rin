@@ -57,7 +57,7 @@ define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder): 
 }
 
 define _get-callback-label-ptr(): int {
-  let callback-ptr = core.magic.cast(_, pointer, _callback);
+  let callback-ptr = core.magic.cast<_, pointer>(_callback);
   let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2)));
   free(callback-ptr);
   callback-label-ptr
@@ -115,8 +115,8 @@ define perform(req: request, c: config): rin(response) {
     pin body = body;
     pin body-parameter = to-c-string(body);
     try _ = _curl_easy_setopt_text(h, CURLOPT_URL, url);
-    pin method' = show-request-method(method);
-    pin method-parameter = to-c-string(method');
+    pin method = show-request-method(method);
+    pin method-parameter = to-c-string(method);
     try _ = _curl_easy_setopt_text(h, CURLOPT_CUSTOMREQUEST, method-parameter);
     _with-header(fields, function (slist) {
       try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist));
