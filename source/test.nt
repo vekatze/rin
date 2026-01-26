@@ -15,7 +15,7 @@ import {
 define main(): unit {
   let result =
     perform(
-      Request of {
+      Request{
         method := GET,
         path := *"/",
         fields := {
@@ -27,7 +27,7 @@ define main(): unit {
         },
         body := *"こんにちは〜",
       },
-      Config of {
+      Config{
         host := "http://localhost:8080",
         initial-buffer-size := 1024,
         options := {
@@ -40,7 +40,7 @@ define main(): unit {
     );
   match result {
   | Right(response) =>
-    let Response of {status-code, body, fields} = response;
+    let Response{status-code, body, fields} = response;
     pin body = body;
     print-line("success:");
     print-line(body);

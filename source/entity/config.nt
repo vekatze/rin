@@ -11,7 +11,7 @@ data config {
 }
 
 define default-config(host: &text): config {
-  Config of {
+  Config{
     host,
     initial-buffer-size := 1024,
     options := {

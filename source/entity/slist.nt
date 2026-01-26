@@ -32,7 +32,7 @@ inline _fold-left-maybe<elem-type, result-type>(
       | Nil =>
         Right(acc)
       | Cons(y, ys) =>
-        try tmp = !consumer(acc, y);
+        try tmp = consumer(acc, y);
         loop(tmp, ys)
       }
     };
