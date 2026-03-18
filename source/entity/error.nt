@@ -16,7 +16,7 @@ foreign {
   curl_easy_strerror(_curl-code): pointer,
 }
 
-define show-error(e: error): text {
+define show-error(e: error) -> text {
   match e {
   | Curl-Error(c) =>
     let str = magic external curl_easy_strerror(c);

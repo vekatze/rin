@@ -16,91 +16,91 @@ foreign {
   neut_rin_v0_1_CURLE_OK(): int,
 }
 
-inline CURL_GLOBAL_DEFAULT: int {
+constant CURL_GLOBAL_DEFAULT: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURL_GLOBAL_DEFAULT()
   }
 }
 
-inline CURLH_HEADER: int {
+constant CURLH_HEADER: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLH_HEADER()
   }
 }
 
-inline CURLINFO_RESPONSE_CODE: int {
+constant CURLINFO_RESPONSE_CODE: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLINFO_RESPONSE_CODE()
   }
 }
 
-inline CURLOPT_CUSTOMREQUEST: int {
+constant CURLOPT_CUSTOMREQUEST: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_CUSTOMREQUEST()
   }
 }
 
-inline CURLOPT_FOLLOWLOCATION: int {
+constant CURLOPT_FOLLOWLOCATION: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_FOLLOWLOCATION()
   }
 }
 
-inline CURLOPT_HTTPHEADER: int {
+constant CURLOPT_HTTPHEADER: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_HTTPHEADER()
   }
 }
 
-inline CURLOPT_POSTFIELDS: int {
+constant CURLOPT_POSTFIELDS: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_POSTFIELDS()
   }
 }
 
-inline CURLOPT_POSTFIELDSIZE: int {
+constant CURLOPT_POSTFIELDSIZE: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_POSTFIELDSIZE()
   }
 }
 
-inline CURLOPT_TIMEOUT: int {
+constant CURLOPT_TIMEOUT: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_TIMEOUT()
   }
 }
 
-inline CURLOPT_URL: int {
+constant CURLOPT_URL: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_URL()
   }
 }
 
-inline CURLOPT_WRITEFUNCTION: int {
+constant CURLOPT_WRITEFUNCTION: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_WRITEFUNCTION()
   }
 }
 
-inline CURLOPT_WRITEDATA: int {
+constant CURLOPT_WRITEDATA: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_WRITEDATA()
   }
 }
 
-inline CURLOPT_HEADERFUNCTION: int {
+constant CURLOPT_HEADERFUNCTION: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_HEADERFUNCTION()
   }
 }
 
-inline CURLOPT_HEADERDATA: int {
+constant CURLOPT_HEADERDATA: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_HEADERDATA()
   }
 }
 
-inline CURLE_OK: int {
+constant CURLE_OK: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLE_OK()
   }

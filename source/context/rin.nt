@@ -6,7 +6,7 @@ alias rin(a: type) {
   either(error, a)
 }
 
-inline _wrap-curl-code<a>(code: _curl-code, result: a): rin(a) {
+inline _wrap-curl-code<a>(code: _curl-code, result: a) -> rin(a) {
   if eq-int(magic cast(_curl-code, int, code), 0) {
     Right(result)
   } else {

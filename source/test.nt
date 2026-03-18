@@ -12,7 +12,7 @@ import {
   this.perform {perform},
 }
 
-define main(): unit {
+define main() -> unit {
   let result =
     perform(
       Request{
@@ -56,6 +56,6 @@ define main(): unit {
   }
 }
 
-define zen(): unit {
+define zen() -> unit {
   main()
 }

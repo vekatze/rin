@@ -48,7 +48,7 @@ foreign {
   neut_rin_v0_1_get_header_value(pointer): pointer,
 }
 
-define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder): int {
+define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -> int {
   let total-size = mul-int(size, nmemb);
   let content-head-ptr = _get-head-ptr(stream, total-size);
   let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0);
@@ -56,14 +56,14 @@ define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder): 
   total-size
 }
 
-define _get-callback-label-ptr(): int {
+define _get-callback-label-ptr() -> int {
   let callback-ptr = core.magic.cast<_, pointer>(_callback);
   let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2)));
   free(callback-ptr);
   callback-label-ptr
 }
 
-define _read-all-headers(h: _handle, cursor: pointer): header {
+define _read-all-headers(h: _handle, cursor: pointer) -> header {
   let last: int = -1;
   let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor);
   if eq-int(magic cast(pointer, int, new-header), 0) {
@@ -85,7 +85,7 @@ define _read-all-headers(h: _handle, cursor: pointer): header {
   }
 }
 
-define _interpret-options(h: _handle, options: list(option)): rin(unit) {
+define _interpret-options(h: _handle, options: list(option)) -> rin(unit) {
   match options {
   | Nil =>
     Right(Unit)
@@ -101,7 +101,7 @@ define _interpret-options(h: _handle, options: list(option)): rin(unit) {
   }
 }
 
-define perform(req: request, c: config): rin(response) {
+define perform(req: request, c: config) -> rin(response) {
   _with-handle(function (h) {
     let Config{host, initial-buffer-size, options} = c;
     try _ = _interpret-options(h, options);

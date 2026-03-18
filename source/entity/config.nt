@@ -10,7 +10,7 @@ data config {
   )
 }
 
-define default-config(host: &text): config {
+define default-config(host: &text) -> config {
   Config{
     host,
     initial-buffer-size := 1024,
