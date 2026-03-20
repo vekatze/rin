@@ -25,8 +25,7 @@ inline _fold-left-maybe<elem-type, result-type>(
   acc: result-type,
   xs: list(elem-type),
   !consumer: (result-type, elem-type) -> ?result-type,
-)->
-?result-type {
+) -> ?result-type {
   let helper =
     define loop(acc, xs) -> ?result-type {
       match xs {
@@ -59,7 +58,7 @@ inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text) -> ?_slist
 }
 
 define _make-slist-maybe(fields: header) -> ?_slist {
-  _fold-left-maybe(_empty-slist, fields, function (acc, field) {
+  _fold-left-maybe(_empty-slist, fields, (acc, field) => {
     let Field(key, value) = field;
     _slist-append-maybe(acc, key, value)
   })
