@@ -1,7 +1,7 @@
 import {
   core.c-string {c-string, to-c-string},
   core.magic,
-  core.text {format},
+  core.string {format},
   http-base.field {Field},
   http-base.header {header},
   this.context.rin {rin},
@@ -44,7 +44,7 @@ define _slist-free(slist-ptr: _slist) -> unit {
   Unit
 }
 
-inline _slist-append-maybe(slist-ptr: _slist, key: text, value: text) -> ?_slist {
+inline _slist-append-maybe(slist-ptr: _slist, key: string, value: string) -> ?_slist {
   pin kv = format("{}: {}", List[key, value]);
   pin content = to-c-string(kv);
   let content = core.magic.cast<&c-string, pointer>(content);

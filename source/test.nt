@@ -1,6 +1,6 @@
 import {
   core.int.io {print-int-line},
-  core.text.io {print-line},
+  core.string.io {print-line},
   http-base.field {Field},
   http-base.header.show {show-header},
   http-base.request {Request},

@@ -81,7 +81,7 @@ define _curl_easy_setopt_bool(h: _handle, option: int, parameter: bool) -> rin(u
   _wrap-curl-code(code, Unit)
 }
 
-define _curl_easy_setopt_text(h: _handle, option: int, parameter: &c-string) -> rin(unit) {
+define _curl_easy_setopt_string(h: _handle, option: int, parameter: &c-string) -> rin(unit) {
   let parameter = magic cast(&c-string, pointer, parameter);
   let code = magic external curl_easy_setopt(h, option)(parameter: pointer);
   _wrap-curl-code(code, Unit)
