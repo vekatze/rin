@@ -27,7 +27,7 @@ inline _fold-left-maybe<elem-type, result-type>(
   !consumer: (result-type, elem-type) -> ?result-type,
 ) -> ?result-type {
   let helper =
-    define loop(acc, xs) -> ?result-type {
+    define loop(acc: result-type, xs: list(elem-type)) -> ?result-type {
       match xs {
       | Nil =>
         Right(acc)
