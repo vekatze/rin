@@ -13,8 +13,8 @@ data _slist {
 }
 
 foreign {
-  curl_slist_append(_slist, pointer): pointer,
-  curl_slist_free_all(_slist): void,
+  curl_slist_append(_slist, pointer) -> pointer,
+  curl_slist_free_all(_slist) -> void,
 }
 
 constant _empty-slist: _slist {

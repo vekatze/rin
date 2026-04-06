@@ -42,10 +42,10 @@ import {
 }
 
 foreign {
-  llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1): void,
-  curl_easy_nextheader(_handle, int, int, pointer): pointer,
-  neut_rin_v0_1_get_header_name(pointer): pointer,
-  neut_rin_v0_1_get_header_value(pointer): pointer,
+  llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1) -> void,
+  curl_easy_nextheader(_handle, int, int, pointer) -> pointer,
+  neut_rin_v0_1_get_header_name(pointer) -> pointer,
+  neut_rin_v0_1_get_header_value(pointer) -> pointer,
 }
 
 define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -> int {

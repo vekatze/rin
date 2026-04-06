@@ -11,13 +11,13 @@ data _handle {
 }
 
 foreign {
-  curl_global_init(int): _curl-code,
-  curl_global_cleanup(): void,
-  curl_easy_init(): pointer,
-  curl_easy_cleanup(_handle): void,
-  curl_easy_setopt(_handle, int): _curl-code,
-  curl_easy_getinfo(_handle, int): _curl-code,
-  curl_easy_perform(_handle): _curl-code,
+  curl_global_init(int) -> _curl-code,
+  curl_global_cleanup() -> void,
+  curl_easy_init() -> pointer,
+  curl_easy_cleanup(_handle) -> void,
+  curl_easy_setopt(_handle, int) -> _curl-code,
+  curl_easy_getinfo(_handle, int) -> _curl-code,
+  curl_easy_perform(_handle) -> _curl-code,
 }
 
 define _curl_global_init(flags: int) -> _curl-code {

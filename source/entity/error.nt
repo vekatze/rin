@@ -13,7 +13,7 @@ data error {
 }
 
 foreign {
-  curl_easy_strerror(_curl-code): pointer,
+  curl_easy_strerror(_curl-code) -> pointer,
 }
 
 define show-error(e: error) -> string {
