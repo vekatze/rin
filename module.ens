@@ -41,9 +41,9 @@
       ],
     },
     path {
-      digest "xvSYbeEF79GckV4FtdK4eMtm13Dq25cyX9mddPTszt8",
+      digest "Y_UDacwPSGskgLBewceXptwX6Q2N644ZoPL_6tFIYiQ",
       mirror [
-        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-53.tar.zst",
+        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-54.tar.zst",
       ],
     },
   },
