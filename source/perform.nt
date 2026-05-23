@@ -1,11 +1,11 @@
 import {
-  core.binary-builder {_get-head-ptr, _proceed, binary-builder, extract, make-binary-builder},
-  core.c-string {c-string, from-c-string, to-c-string},
-  core.external {free},
-  core.magic,
-  core.memory {load-int},
+  core.binary.builder {binary-builder, extract, make-binary-builder},
+  core.binary.builder.unsafe {append-chunk},
+  core.c-string {c-string, from-string, to-string},
+  core.memory.unsafe {free, load-int},
   core.pointer {null-pointer, shift},
-  core.string {_String, string-byte-length},
+  core.string {byte-length},
+  core.string.unsafe {from-binary},
   core.word,
   http-base.field {Field},
   http-base.header {header},
@@ -13,7 +13,7 @@ import {
   http-base.request-method.show {show-request-method},
   http-base.response {Response, response},
   path.path,
-  this.context.foreign {
+  this._context.foreign {
     CURLH_HEADER,
     CURLINFO_RESPONSE_CODE,
     CURLOPT_CUSTOMREQUEST,
@@ -26,57 +26,54 @@ import {
     CURLOPT_WRITEDATA,
     CURLOPT_WRITEFUNCTION,
   },
-  this.context.rin {rin},
-  this.entity.config {Config, config},
-  this.entity.handle {
-    _curl_easy_getinfo,
-    _curl_easy_perform,
-    _curl_easy_setopt,
-    _curl_easy_setopt_bool,
-    _curl_easy_setopt_string,
-    _handle,
-    _with-handle,
+  this._entity.handle {
+    curl-easy-getinfo,
+    curl-easy-perform,
+    curl-easy-setopt,
+    curl-easy-setopt-bool,
+    curl-easy-setopt-string,
+    handle,
+    with-handle,
   },
+  this._entity.slist {slist, with-header},
+  this.entity.config {Config, config},
   this.entity.option {Follow-Location, Timeout, option},
-  this.entity.slist {_slist, _with-header},
+  this.rin {rin},
 }
 
 foreign {
-  llvm.memcpy.p0.p0.i64(pointer, pointer, int64, int1) -> void,
-  curl_easy_nextheader(_handle, int, int, pointer) -> pointer,
+  curl_easy_nextheader(handle, int, int, pointer) -> pointer,
   neut_rin_v0_1_get_header_name(pointer) -> pointer,
   neut_rin_v0_1_get_header_value(pointer) -> pointer,
 }
 
 define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -> int {
   let total-size = mul-int(size, nmemb);
-  let content-head-ptr = _get-head-ptr(stream, total-size);
-  let _ = magic external llvm.memcpy.p0.p0.i64(content-head-ptr, ptr, total-size, 0);
-  _proceed(stream, total-size);
+  append-chunk(stream, ptr, total-size);
   total-size
 }
 
 define _get-callback-label-ptr() -> int {
-  let callback-ptr = core.magic.cast<_, pointer>(_callback);
+  let callback-ptr = magic cast(_, pointer, _callback);
   let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2)));
   free(callback-ptr);
   callback-label-ptr
 }
 
-define _read-all-headers(h: _handle, cursor: pointer) -> header {
+define _read-all-headers(h: handle, cursor: pointer) -> header {
   let last: int = -1;
   let new-header = magic external curl_easy_nextheader(h, CURLH_HEADER, last, cursor);
   if eq-int(magic cast(pointer, int, new-header), 0) {
     Nil
   } else {
     let name =
-      from-c-string(magic cast(
+      to-string(magic cast(
         pointer,
         &c-string,
         magic external neut_rin_v0_1_get_header_name(new-header),
       ));
     let value =
-      from-c-string(magic cast(
+      to-string(magic cast(
         pointer,
         &c-string,
         magic external neut_rin_v0_1_get_header_value(new-header),
@@ -85,51 +82,51 @@ define _read-all-headers(h: _handle, cursor: pointer) -> header {
   }
 }
 
-define _interpret-options(h: _handle, options: list(option)) -> rin(unit) {
+define _interpret-options(h: handle, options: list(option)) -> rin(unit) {
   match options {
   | Nil =>
     Right(Unit)
   | Cons(o, rest) =>
     match o {
     | Follow-Location(b) =>
-      try _ = _curl_easy_setopt_bool(h, CURLOPT_FOLLOWLOCATION, b);
+      try _ = curl-easy-setopt-bool(h, CURLOPT_FOLLOWLOCATION, b);
       _interpret-options(h, rest)
     | Timeout(x) =>
-      try _ = _curl_easy_setopt(h, CURLOPT_TIMEOUT, x);
+      try _ = curl-easy-setopt(h, CURLOPT_TIMEOUT, x);
       _interpret-options(h, rest)
     }
   }
 }
 
 define perform(req: request, c: config) -> rin(response) {
-  _with-handle((h) => {
+  with-handle((h) => {
     let Config{host, initial-buffer-size, options} = c;
     try _ = _interpret-options(h, options);
     let Request{method, path, fields, body} = req;
     pin path = path;
     let url = {
       pin tmp = path.path.append(host, path);
-      to-c-string(tmp)
+      from-string(tmp)
     };
     pin url = url;
     pin body = body;
-    pin body-parameter = to-c-string(body);
-    try _ = _curl_easy_setopt_string(h, CURLOPT_URL, url);
+    pin body-parameter = from-string(body);
+    try _ = curl-easy-setopt-string(h, CURLOPT_URL, url);
     pin method = show-request-method(method);
-    pin method-parameter = to-c-string(method);
-    try _ = _curl_easy_setopt_string(h, CURLOPT_CUSTOMREQUEST, method-parameter);
-    _with-header(fields, (slist) => {
-      try _ = _curl_easy_setopt(h, CURLOPT_HTTPHEADER, magic cast(_slist, int, slist));
-      try _ = _curl_easy_setopt_string(h, CURLOPT_POSTFIELDS, body-parameter);
-      try _ = _curl_easy_setopt(h, CURLOPT_POSTFIELDSIZE, string-byte-length(body));
+    pin method-parameter = from-string(method);
+    try _ = curl-easy-setopt-string(h, CURLOPT_CUSTOMREQUEST, method-parameter);
+    with-header(fields, (header-list) => {
+      try _ = curl-easy-setopt(h, CURLOPT_HTTPHEADER, magic cast(slist, int, header-list));
+      try _ = curl-easy-setopt-string(h, CURLOPT_POSTFIELDS, body-parameter);
+      try _ = curl-easy-setopt(h, CURLOPT_POSTFIELDSIZE, byte-length(body));
       let callback-label-ptr = _get-callback-label-ptr();
       let body-buffer = make-binary-builder(initial-buffer-size);
-      let _ on body-buffer = _curl_easy_setopt(h, CURLOPT_WRITEDATA, magic cast(&binary-builder, int, body-buffer));
-      try _ = _curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr);
-      try _ = _curl_easy_perform(h);
-      try status-code = _curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE);
+      let _ on body-buffer = curl-easy-setopt(h, CURLOPT_WRITEDATA, magic cast(&binary-builder, int, body-buffer));
+      try _ = curl-easy-setopt(h, CURLOPT_WRITEFUNCTION, callback-label-ptr);
+      try _ = curl-easy-perform(h);
+      try status-code = curl-easy-getinfo(h, CURLINFO_RESPONSE_CODE);
       let fields = _read-all-headers(h, null-pointer);
-      let body = _String(extract(body-buffer));
+      let body = from-binary(extract(body-buffer));
       Right(
         Response{
           status-code,

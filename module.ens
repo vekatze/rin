@@ -1,7 +1,7 @@
 {
   target {
     test {
-      main "test.nt",
+      main "_test.nt",
       build-option [
         "$(pkg-config libcurl --libs --cflags)",
         // AddressSanitizer might report memory leaks in `curl_global_init` on macOS
@@ -17,33 +17,33 @@
   },
   foreign {
     input [
-      "source/context/foreign.c",
+      "source/_context/foreign.c",
     ],
     output [
       "context/foreign.o",
     ],
     script [
-      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/context/foreign.c -o {{foreign}}/context/foreign.o",
+      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/_context/foreign.c -o {{foreign}}/context/foreign.o",
     ],
   },
   dependency {
     core {
-      digest "yNWbpR6FH89l8vrvc2fh4PMZYlLEGtCzBHxT8aZQS5o",
+      digest "AX53Hz1GVFQcEX-csE0C33px9odb_zm98r5nRFnMvRg",
       mirror [
-        "https://github.com/vekatze/neut-core/raw/main/archive/0-54-9.tar.zst",
+        "https://github.com/vekatze/neut-core/raw/main/archive/0-55-1.tar.zst",
       ],
       enable-preset true,
     },
     http-base {
-      digest "5FbkqP9-ngHiz08xZWgmPezAE3tesNsE0QpQNatisSQ",
+      digest "18DFA6iTJwPJy3_PYL6VDeZtriYbf2NVBx6aSYjKNqg",
       mirror [
-        "https://github.com/vekatze/http-base-nt/raw/main/archive/0-1-50.tar.zst",
+        "https://github.com/vekatze/http-base-nt/raw/main/archive/0-1-51.tar.zst",
       ],
     },
     path {
-      digest "Y_UDacwPSGskgLBewceXptwX6Q2N644ZoPL_6tFIYiQ",
+      digest "nel1PcGMjeM4b5Ih0N0HpHO3sVYot0UMuLikT2UvV_Q",
       mirror [
-        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-54.tar.zst",
+        "https://github.com/vekatze/path-nt/raw/main/archive/0-1-55.tar.zst",
       ],
     },
   },

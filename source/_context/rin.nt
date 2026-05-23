@@ -1,0 +1,12 @@
+import {
+  this.entity.error {Curl-Error, curl-code},
+  this.rin {rin},
+}
+
+inline wrap-curl-code<a>(code: curl-code, result: a) -> rin(a) {
+  if eq-int(magic cast(curl-code, int, code), 0) {
+    Right(result)
+  } else {
+    Left(Curl-Error(code))
+  }
+}

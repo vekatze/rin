@@ -1,0 +1,7 @@
+import {
+  this.entity.error {error},
+}
+
+alias rin(a: type) {
+  either(error, a)
+}

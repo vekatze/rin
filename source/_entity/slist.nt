@@ -1,24 +1,23 @@
 import {
-  core.c-string {c-string, to-c-string},
-  core.magic,
+  core.c-string {c-string, from-string},
   core.string {format},
   http-base.field {Field},
   http-base.header {header},
-  this.context.rin {rin},
   this.entity.error {Curl-Header-Construction-Error, error},
+  this.rin {rin},
 }
 
-data _slist {
+data slist {
 | _Slist(pointer)
 }
 
 foreign {
-  curl_slist_append(_slist, pointer) -> pointer,
-  curl_slist_free_all(_slist) -> void,
+  curl_slist_append(slist, pointer) -> pointer,
+  curl_slist_free_all(slist) -> void,
 }
 
-constant _empty-slist: _slist {
-  magic cast(int, _slist, 0)
+constant _empty-slist: slist {
+  magic cast(int, slist, 0)
 }
 
 inline _fold-left-maybe<elem-type, result-type>(
@@ -39,25 +38,25 @@ inline _fold-left-maybe<elem-type, result-type>(
   helper(acc, xs)
 }
 
-define _slist-free(slist-ptr: _slist) -> unit {
+define _slist-free(slist-ptr: slist) -> unit {
   let _ = magic external curl_slist_free_all(slist-ptr);
   Unit
 }
 
-inline _slist-append-maybe(slist-ptr: _slist, key: string, value: string) -> ?_slist {
+inline _slist-append-maybe(slist-ptr: slist, key: string, value: string) -> ?slist {
   pin kv = format("{}: {}", List[key, value]);
-  pin content = to-c-string(kv);
-  let content = core.magic.cast<&c-string, pointer>(content);
+  pin content = from-string(kv);
+  let content = magic cast(&c-string, pointer, content);
   let result = magic external curl_slist_append(slist-ptr, content);
   if eq-int(magic cast(pointer, int, result), 0) {
     _slist-free(slist-ptr);
     none
   } else {
-    Right(magic cast(pointer, _slist, result))
+    Right(magic cast(pointer, slist, result))
   }
 }
 
-define _make-slist-maybe(fields: header) -> ?_slist {
+define _make-slist-maybe(fields: header) -> ?slist {
   _fold-left-maybe(_empty-slist, fields, (acc, field) => {
     let Field(key, value) = field;
     _slist-append-maybe(acc, key, value)
@@ -73,7 +72,7 @@ define _lift-none<a>(e: ?a) -> either(error, a) {
   }
 }
 
-define _with-header<a>(fields: header, callback: (_slist) -> rin(a)) -> rin(a) {
+define with-header<a>(fields: header, callback: (slist) -> rin(a)) -> rin(a) {
   try slist = _lift-none(_make-slist-maybe(fields));
   let result = callback(slist);
   _slist-free(slist);

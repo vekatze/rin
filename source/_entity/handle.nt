@@ -1,26 +1,27 @@
 import {
   core.c-string {c-string},
-  core.memory {load-int},
-  this.context.foreign {CURL_GLOBAL_DEFAULT},
-  this.context.rin {_wrap-curl-code, rin},
-  this.entity.error {Curl-Error, Curl-Initialization-Error, _curl-code},
+  core.memory.unsafe {load-int},
+  this._context.foreign {CURL_GLOBAL_DEFAULT},
+  this._context.rin {wrap-curl-code},
+  this.entity.error {Curl-Error, Curl-Initialization-Error, curl-code},
+  this.rin {rin},
 }
 
-data _handle {
+data handle {
 | _Curl-Handle(pointer)
 }
 
 foreign {
-  curl_global_init(int) -> _curl-code,
+  curl_global_init(int) -> curl-code,
   curl_global_cleanup() -> void,
   curl_easy_init() -> pointer,
-  curl_easy_cleanup(_handle) -> void,
-  curl_easy_setopt(_handle, int) -> _curl-code,
-  curl_easy_getinfo(_handle, int) -> _curl-code,
-  curl_easy_perform(_handle) -> _curl-code,
+  curl_easy_cleanup(handle) -> void,
+  curl_easy_setopt(handle, int) -> curl-code,
+  curl_easy_getinfo(handle, int) -> curl-code,
+  curl_easy_perform(handle) -> curl-code,
 }
 
-define _curl_global_init(flags: int) -> _curl-code {
+define _curl_global_init(flags: int) -> curl-code {
   magic external curl_global_init(flags)
 }
 
@@ -30,7 +31,7 @@ define _curl_easy_init() -> pointer {
 
 define _global-init() -> rin(unit) {
   let code = _curl_global_init(CURL_GLOBAL_DEFAULT);
-  _wrap-curl-code(code, Unit)
+  wrap-curl-code(code, Unit)
 }
 
 define _global_cleanup() -> unit {
@@ -38,33 +39,33 @@ define _global_cleanup() -> unit {
   Unit
 }
 
-define _init() -> rin(_handle) {
+define _init() -> rin(handle) {
   let result = _curl_easy_init();
   if eq-int(magic cast(pointer, int, result), 0) {
     Left(Curl-Initialization-Error)
   } else {
-    Right(magic cast(pointer, _handle, result))
+    Right(magic cast(pointer, handle, result))
   }
 }
 
-define _cleanup(h: _handle) -> unit {
+define _cleanup(h: handle) -> unit {
   let _ = magic external curl_easy_cleanup(h);
   Unit
 }
 
-define _curl_easy_getinfo(h: _handle, option: int) -> rin(int) {
+define curl-easy-getinfo(h: handle, option: int) -> rin(int) {
   let buffer = magic alloca(int, 1);
   let result = magic external curl_easy_getinfo(h, option)(buffer: pointer);
-  if eq-int(magic cast(_curl-code, int, result), 0) {
+  if eq-int(magic cast(curl-code, int, result), 0) {
     Right(load-int(buffer))
   } else {
     Left(Curl-Error(result))
   }
 }
 
-define _curl_easy_setopt(h: _handle, option: int, parameter: int) -> rin(unit) {
+define curl-easy-setopt(h: handle, option: int, parameter: int) -> rin(unit) {
   let code = magic external curl_easy_setopt(h, option)(parameter: int);
-  _wrap-curl-code(code, Unit)
+  wrap-curl-code(code, Unit)
 }
 
 define _bool-to-int(b: bool) -> int {
@@ -75,24 +76,24 @@ define _bool-to-int(b: bool) -> int {
   }
 }
 
-define _curl_easy_setopt_bool(h: _handle, option: int, parameter: bool) -> rin(unit) {
+define curl-easy-setopt-bool(h: handle, option: int, parameter: bool) -> rin(unit) {
   let content = _bool-to-int(parameter);
   let code = magic external curl_easy_setopt(h, option)(content: int);
-  _wrap-curl-code(code, Unit)
+  wrap-curl-code(code, Unit)
 }
 
-define _curl_easy_setopt_string(h: _handle, option: int, parameter: &c-string) -> rin(unit) {
+define curl-easy-setopt-string(h: handle, option: int, parameter: &c-string) -> rin(unit) {
   let parameter = magic cast(&c-string, pointer, parameter);
   let code = magic external curl_easy_setopt(h, option)(parameter: pointer);
-  _wrap-curl-code(code, Unit)
+  wrap-curl-code(code, Unit)
 }
 
-define _curl_easy_perform(h: _handle) -> rin(unit) {
+define curl-easy-perform(h: handle) -> rin(unit) {
   let code = magic external curl_easy_perform(h);
-  _wrap-curl-code(code, Unit)
+  wrap-curl-code(code, Unit)
 }
 
-inline _with-handle<a>(callback: (_handle) -> rin(a)) -> rin(a) {
+inline with-handle<a>(callback: (handle) -> rin(a)) -> rin(a) {
   try _ = _global-init();
   match _init() {
   | Left(e) =>
