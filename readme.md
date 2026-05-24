@@ -17,7 +17,7 @@ apt install libcurl4-openssl-dev pkg-config
 Install this module as usual:
 
 ```sh
-neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-45.tar.zst
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-46.tar.zst
 ```
 
 ### Configure Your App
@@ -29,7 +29,7 @@ Add something like the following to your app's `module.ens`:
   // ..
   target {
     test {
-      main "test.nt",
+      main "_test.nt",
       // ↓ add
       build-option [
         "$(pkg-config libcurl --libs --cflags)",
@@ -84,7 +84,7 @@ data option {
 
 // The type of errors in `rin`.
 data error {
-| Curl-Error(error-code: _curl-code)
+| Curl-Error(error-code: curl-code)
 | Curl-Initialization-Error
 | Curl-Header-Construction-Error
 }
