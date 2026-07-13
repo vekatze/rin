@@ -1,5 +1,5 @@
 import {
-  this.entity.option {Follow-Location, option},
+  entity.option {Follow-Location, option},
 }
 
 data config {
@@ -15,7 +15,7 @@ define default-config(host: &string) -> config {
     host,
     initial-buffer-size := 1024,
     options := {
-      List[
+      List::[
         Follow-Location(True),
       ]
     },

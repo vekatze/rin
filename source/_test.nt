@@ -1,14 +1,14 @@
 import {
-  core.int.io {print-int-line},
-  http-base.field {Field},
-  http-base.header.show {show-header},
-  http-base.request {Request},
-  http-base.request-method {GET},
-  http-base.response {Response},
-  this.entity.config {Config},
-  this.entity.error {show-error},
-  this.entity.option {Follow-Location, Timeout},
-  this.perform {perform},
+  core::int.io {print-int-line},
+  http-base::field {Field},
+  http-base::header.show {show-header},
+  http-base::request {Request},
+  http-base::request-method {GET},
+  http-base::response {Response},
+  entity.config {Config},
+  entity.error {show-error},
+  entity.option {Follow-Location, Timeout},
+  perform {perform},
 }
 
 define main() -> unit {
@@ -18,7 +18,7 @@ define main() -> unit {
         method := GET,
         path := *"/",
         fields := {
-          List[
+          List::[
             Field(*"My-Field", *"hoge"),
             Field(*"Content-Type", *"application/json"),
             Field(*"x-my-extension", *"Bearer 1234567890"),
@@ -30,7 +30,7 @@ define main() -> unit {
         host := "http://localhost:8080",
         initial-buffer-size := 1024,
         options := {
-          List[
+          List::[
             Follow-Location(True),
             Timeout(2),
           ]

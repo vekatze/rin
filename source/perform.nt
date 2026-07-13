@@ -1,19 +1,19 @@
 import {
-  core.binary.builder {binary-builder, extract, make-binary-builder},
-  core.binary.builder.unsafe {append-chunk},
-  core.c-string {c-string, from-string, to-string},
-  core.memory.unsafe {free, load-int},
-  core.pointer {null-pointer, shift},
-  core.string {byte-length},
-  core.string.unsafe {from-binary},
-  core.word,
-  http-base.field {Field},
-  http-base.header {header},
-  http-base.request {Request, request},
-  http-base.request-method.show {show-request-method},
-  http-base.response {Response, response},
-  path.path,
-  this._context.foreign {
+  core::binary.builder {binary-builder, extract, make-binary-builder},
+  core::binary.builder.unsafe {append-chunk},
+  core::c-string {c-string, from-string, to-string},
+  core::memory.unsafe {free, load-int},
+  core::path,
+  core::pointer {null-pointer, shift},
+  core::string {byte-length},
+  core::string.unsafe {from-binary},
+  core::word,
+  http-base::field {Field},
+  http-base::header {header},
+  http-base::request {Request, request},
+  http-base::request-method.show {show-request-method},
+  http-base::response {Response, response},
+  _context.foreign {
     CURLH_HEADER,
     CURLINFO_RESPONSE_CODE,
     CURLOPT_CUSTOMREQUEST,
@@ -26,7 +26,7 @@ import {
     CURLOPT_WRITEDATA,
     CURLOPT_WRITEFUNCTION,
   },
-  this._entity.handle {
+  _entity.handle {
     curl-easy-getinfo,
     curl-easy-perform,
     curl-easy-setopt,
@@ -35,10 +35,10 @@ import {
     handle,
     with-handle,
   },
-  this._entity.slist {slist, with-header},
-  this.entity.config {Config, config},
-  this.entity.option {Follow-Location, Timeout, option},
-  this.rin {rin},
+  _entity.slist {slist, with-header},
+  entity.config {Config, config},
+  entity.option {Follow-Location, Timeout, option},
+  rin {rin},
 }
 
 foreign {
@@ -55,7 +55,7 @@ define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -
 
 define _get-callback-label-ptr() -> int {
   let callback-ptr = magic cast(_, pointer, _callback);
-  let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core.word.size, 2)));
+  let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core::word.size, 2)));
   free(callback-ptr);
   callback-label-ptr
 }
@@ -105,7 +105,7 @@ define perform(req: request, c: config) -> rin(response) {
     let Request{method, path, fields, body} = req;
     pin path = path;
     let url = {
-      pin tmp = path.path.append(host, path);
+      pin tmp = core::path.append(host, path);
       from-string(tmp)
     };
     pin url = url;

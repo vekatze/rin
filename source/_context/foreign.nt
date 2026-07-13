@@ -11,9 +11,6 @@ foreign {
   neut_rin_v0_1_CURLOPT_URL() -> int,
   neut_rin_v0_1_CURLOPT_WRITEFUNCTION() -> int,
   neut_rin_v0_1_CURLOPT_WRITEDATA() -> int,
-  neut_rin_v0_1_CURLOPT_HEADERFUNCTION() -> int,
-  neut_rin_v0_1_CURLOPT_HEADERDATA() -> int,
-  neut_rin_v0_1_CURLE_OK() -> int,
 }
 
 constant CURL_GLOBAL_DEFAULT: int {
@@ -85,23 +82,5 @@ constant CURLOPT_WRITEFUNCTION: int {
 constant CURLOPT_WRITEDATA: int {
   magic opaque-value {
     magic external neut_rin_v0_1_CURLOPT_WRITEDATA()
-  }
-}
-
-constant CURLOPT_HEADERFUNCTION: int {
-  magic opaque-value {
-    magic external neut_rin_v0_1_CURLOPT_HEADERFUNCTION()
-  }
-}
-
-constant CURLOPT_HEADERDATA: int {
-  magic opaque-value {
-    magic external neut_rin_v0_1_CURLOPT_HEADERDATA()
-  }
-}
-
-constant CURLE_OK: int {
-  magic opaque-value {
-    magic external neut_rin_v0_1_CURLE_OK()
   }
 }

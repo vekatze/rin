@@ -1,10 +1,10 @@
 import {
-  core.c-string {c-string, from-string},
-  core.string {format},
-  http-base.field {Field},
-  http-base.header {header},
-  this.entity.error {Curl-Header-Construction-Error, error},
-  this.rin {rin},
+  core::c-string {c-string, from-string},
+  core::string {format},
+  http-base::field {Field},
+  http-base::header {header},
+  entity.error {Curl-Header-Construction-Error, error},
+  rin {rin},
 }
 
 data slist {
@@ -44,7 +44,7 @@ define _slist-free(slist-ptr: slist) -> unit {
 }
 
 inline _slist-append-maybe(slist-ptr: slist, key: string, value: string) -> ?slist {
-  pin kv = format("{}: {}", List[key, value]);
+  pin kv = format("{}: {}", List::[key, value]);
   pin content = from-string(kv);
   let content = magic cast(&c-string, pointer, content);
   let result = magic external curl_slist_append(slist-ptr, content);
@@ -52,7 +52,7 @@ inline _slist-append-maybe(slist-ptr: slist, key: string, value: string) -> ?sli
     _slist-free(slist-ptr);
     none
   } else {
-    Right(magic cast(pointer, slist, result))
+    Right(_Slist(result))
   }
 }
 
