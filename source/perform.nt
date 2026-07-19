@@ -43,8 +43,8 @@ import {
 
 foreign {
   curl_easy_nextheader(handle, int, int, pointer) -> pointer,
-  neut_rin_v0_1_get_header_name(pointer) -> pointer,
-  neut_rin_v0_1_get_header_value(pointer) -> pointer,
+  neut_rin_v0_2_get_header_name(pointer) -> pointer,
+  neut_rin_v0_2_get_header_value(pointer) -> pointer,
 }
 
 define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -> int {
@@ -70,13 +70,13 @@ define _read-all-headers(h: handle, cursor: pointer) -> header {
       to-string(magic cast(
         pointer,
         &c-string,
-        magic external neut_rin_v0_1_get_header_name(new-header),
+        magic external neut_rin_v0_2_get_header_name(new-header),
       ));
     let value =
       to-string(magic cast(
         pointer,
         &c-string,
-        magic external neut_rin_v0_1_get_header_value(new-header),
+        magic external neut_rin_v0_2_get_header_value(new-header),
       ));
     Cons(Field(name, value), _read-all-headers(h, new-header))
   }
