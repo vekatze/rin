@@ -1,6 +1,6 @@
 import {
-  entity.error {Curl-Error, curl-code},
-  rin {rin},
+  this::entity.error {Curl-Error, curl-code},
+  this::rin {rin},
 }
 
 inline wrap-curl-code<a>(code: curl-code, result: a) -> rin(a) {

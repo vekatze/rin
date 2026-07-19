@@ -1,10 +1,10 @@
 import {
   core::c-string {c-string},
   core::memory.unsafe {load-int},
-  _context.foreign {CURL_GLOBAL_DEFAULT},
-  _context.rin {wrap-curl-code},
-  entity.error {Curl-Error, Curl-Initialization-Error, curl-code},
-  rin {rin},
+  this::_context.foreign {CURL_GLOBAL_DEFAULT},
+  this::_context.rin {wrap-curl-code},
+  this::entity.error {Curl-Error, Curl-Initialization-Error, curl-code},
+  this::rin {rin},
 }
 
 data handle {

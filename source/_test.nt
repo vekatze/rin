@@ -5,10 +5,10 @@ import {
   http-base::request {Request},
   http-base::request-method {GET},
   http-base::response {Response},
-  entity.config {Config},
-  entity.error {show-error},
-  entity.option {Follow-Location, Timeout},
-  perform {perform},
+  this::entity.config {Config},
+  this::entity.error {show-error},
+  this::entity.option {Follow-Location, Timeout},
+  this::perform {perform},
 }
 
 define main() -> unit {

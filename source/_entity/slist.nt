@@ -3,8 +3,8 @@ import {
   core::string {format},
   http-base::field {Field},
   http-base::header {header},
-  entity.error {Curl-Header-Construction-Error, error},
-  rin {rin},
+  this::entity.error {Curl-Header-Construction-Error, error},
+  this::rin {rin},
 }
 
 data slist {

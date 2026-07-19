@@ -1,5 +1,5 @@
 import {
-  entity.error {error},
+  this::entity.error {error},
 }
 
 alias rin(a: type) {
