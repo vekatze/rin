@@ -35,9 +35,9 @@
       enable-preset true,
     },
     http-base {
-      digest "ePahlJQnFuwgMjz4Ulj2mAoEJxdXUmYMljl8GROy-8o",
+      digest "2nqI2ZKVy-l1nsEvAWDizmJ55pIg-4sOb51_B5FFnqE",
       mirror [
-        "https://github.com/vekatze/http-base-nt/raw/main/archive/0.2.0.tar.zst",
+        "https://github.com/vekatze/http-base-nt/raw/main/archive/0.2.1.tar.zst",
       ],
     },
   },
