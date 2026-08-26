@@ -55,7 +55,7 @@ define _cleanup(h: handle) -> unit {
 
 define curl-easy-getinfo(h: handle, option: int) -> rin(int) {
   let buffer = magic alloca(int, 1);
-  let result = magic external curl_easy_getinfo(h, option)(buffer: pointer);
+  let result = magic external curl_easy_getinfo(h, option)(pointer buffer);
   if eq-int(magic cast(curl-code, int, result), 0) {
     Right(load-int(buffer))
   } else {
@@ -64,7 +64,7 @@ define curl-easy-getinfo(h: handle, option: int) -> rin(int) {
 }
 
 define curl-easy-setopt(h: handle, option: int, parameter: int) -> rin(unit) {
-  let code = magic external curl_easy_setopt(h, option)(parameter: int);
+  let code = magic external curl_easy_setopt(h, option)(int parameter);
   wrap-curl-code(code, Unit)
 }
 
@@ -78,13 +78,13 @@ define _bool-to-int(b: bool) -> int {
 
 define curl-easy-setopt-bool(h: handle, option: int, parameter: bool) -> rin(unit) {
   let content = _bool-to-int(parameter);
-  let code = magic external curl_easy_setopt(h, option)(content: int);
+  let code = magic external curl_easy_setopt(h, option)(int content);
   wrap-curl-code(code, Unit)
 }
 
 define curl-easy-setopt-string(h: handle, option: int, parameter: &c-string) -> rin(unit) {
   let parameter = magic cast(&c-string, pointer, parameter);
-  let code = magic external curl_easy_setopt(h, option)(parameter: pointer);
+  let code = magic external curl_easy_setopt(h, option)(pointer parameter);
   wrap-curl-code(code, Unit)
 }
 
