@@ -17,7 +17,7 @@ apt install libcurl4-openssl-dev pkg-config
 Install this module as usual:
 
 ```sh
-neut get rin https://github.com/vekatze/rin/raw/main/archive/0.2.1.tar.zst
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0.2.2.tar.zst
 ```
 
 ### Configure Your App
@@ -101,6 +101,7 @@ The main interface of `rin` is `perform: (request, config) -> rin(response)`:
 
 ```neut
 import {
+  core::int.io {print-int-line},
   core::string.io {print-line},
   http-base::field {Field},
   http-base::header.show {show-header},
@@ -152,6 +153,8 @@ define main() -> unit {
     print-line("header:");
     pin header = show-header(fields);
     print-line(header);
+    print-line("status-code:");
+    print-int-line(status-code);
   | Left(e) =>
     pin error = show-error(e);
     print("failure: ");
