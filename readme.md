@@ -17,7 +17,7 @@ apt install libcurl4-openssl-dev pkg-config
 Install this module as usual:
 
 ```sh
-neut get rin https://github.com/vekatze/rin/raw/main/archive/0-1-46.tar.zst
+neut get rin https://github.com/vekatze/rin/raw/main/archive/0.2.1.tar.zst
 ```
 
 ### Configure Your App
@@ -89,7 +89,7 @@ data error {
 | Curl-Header-Construction-Error
 }
 
-// Converts errors into human-readable texts.
+// Converts an error into human-readable text.
 define show-error(e: error) -> string
 ```
 
@@ -101,16 +101,16 @@ The main interface of `rin` is `perform: (request, config) -> rin(response)`:
 
 ```neut
 import {
-  core.string.io {print-line},
-  http-base.field {Field},
-  http-base.header.show {show-header},
-  http-base.request {Request},
-  http-base.request-method {GET},
-  http-base.response {Response},
-  this.entity.config {Config},
-  this.entity.error {show-error},
-  this.entity.option {Follow-Location, Timeout},
-  this.perform {perform},
+  core::string.io {print-line},
+  http-base::field {Field},
+  http-base::header.show {show-header},
+  http-base::request {Request},
+  http-base::request-method {GET},
+  http-base::response {Response},
+  this::entity.config {Config},
+  this::entity.error {show-error},
+  this::entity.option {Follow-Location, Timeout},
+  this::perform {perform},
 }
 
 define main() -> unit {
@@ -121,7 +121,7 @@ define main() -> unit {
         method := GET,
         path := *"/",
         fields := {
-          List[
+          List::[
             Field(*"My-Field", *"hoge"),
             Field(*"Content-Type", *"application/json"),
             Field(*"x-my-extension", *"Bearer 1234567890"),
@@ -136,7 +136,7 @@ define main() -> unit {
         // (increasing the size when necessary)
         initial-buffer-size := 1024,
         options := {
-          List[
+          List::[
             Follow-Location(True),
             Timeout(2),
           ]
