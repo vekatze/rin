@@ -7,6 +7,7 @@ import {
   core::pointer {null-pointer, shift},
   core::string {byte-length},
   core::string.unsafe {from-binary},
+  core::unsafe {cast},
   core::word,
   http-base::field {Field},
   http-base::header {header},
@@ -54,7 +55,7 @@ define _callback(ptr: pointer, size: int, nmemb: int, stream: &binary-builder) -
 }
 
 define _get-callback-label-ptr() -> int {
-  let callback-ptr = magic cast(_, pointer, _callback);
+  let callback-ptr = cast<_, pointer>(_callback);
   let callback-label-ptr = load-int(shift(callback-ptr, mul-int(core::word::size, 2)));
   free(callback-ptr);
   callback-label-ptr
