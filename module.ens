@@ -3,17 +3,11 @@
     test {
       main "_test.nt",
       build-option [
-        "$(pkg-config libcurl --libs --cflags)",
         // AddressSanitizer might report memory leaks in `curl_global_init` on macOS
         // (cf. https://stackoverflow.com/a/37770799)
         "-fsanitize=address",
       ],
     },
-  },
-  zen {
-    build-option [
-      "$(pkg-config libcurl --libs --cflags)",
-    ],
   },
   foreign {
     input [
@@ -22,8 +16,14 @@
     output [
       "context/foreign.o",
     ],
+    link [
+      "context/foreign.o",
+    ],
+    transitive-link-option [
+      "$(pkg-config libcurl --libs)",
+    ],
     script [
-      "{{clang}} $(pkg-config libcurl --libs --cflags) -c -flto=thin -O2 source/_context/foreign.c -o {{foreign}}/context/foreign.o",
+      "{{clang}} $(pkg-config libcurl --cflags) -c -flto=thin -O2 source/_context/foreign.c -o {{foreign}}/context/foreign.o",
     ],
   },
   dependency {
