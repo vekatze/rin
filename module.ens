@@ -28,14 +28,14 @@
   },
   dependency {
     core {
-      digest "AV5wq2fmffFFvabWuGMEgHXG-jXf543FE_rDYNlWxm0",
+      digest "y_tXrgTua-N3029uEirZRTdGbOVWnwcO8IjX7QqiW1U",
       mirror [
         "https://github.com/vekatze/neut-core/raw/main/archive/0.57.9.tar.zst",
       ],
       enable-preset true,
     },
     http-base {
-      digest "s9j-KeBMkdz04vn-yg-DERlmchNcyUk1hJ6nkAtZ1B8",
+      digest "AHhuhD99W8GfoWc9FQx-A-9gNQsNB-yYa5laez-WBqs",
       mirror [
         "https://github.com/vekatze/http-base-nt/raw/main/archive/0.2.4.tar.zst",
       ],
