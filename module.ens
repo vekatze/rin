@@ -9,35 +9,38 @@
       ],
     },
   },
-  foreign {
-    input [
-      "source/_context/foreign.c",
-    ],
-    output [
-      "context/foreign.o",
-    ],
-    link [
-      "context/foreign.o",
-    ],
-    transitive-link-option [
-      "$(pkg-config libcurl --libs)",
-    ],
-    script [
-      "{{clang}} $(pkg-config libcurl --cflags) -c -flto=thin -O2 source/_context/foreign.c -o {{foreign}}/context/foreign.o",
-    ],
-  },
+  foreign [
+    {
+      platform "${0}/${0}",
+      input [
+        "source/_context/foreign.c",
+      ],
+      output [
+        "context/foreign.o",
+      ],
+      link [
+        "context/foreign.o",
+      ],
+      transitive-link-option [
+        "$(pkg-config libcurl --libs)",
+      ],
+      script [
+        "{{clang}} $(pkg-config libcurl --cflags) -c -flto=thin -O2 source/_context/foreign.c -o {{foreign}}/context/foreign.o",
+      ],
+    },
+  ],
   dependency {
     core {
-      digest "-hD_dy56xnr7w2oe-S8ZduK0_ccKID6Y0wuvi_VfqKQ",
+      digest "U0di-DrJSIaBBKq1kVsSzQNp_DedAAcKQQxv_HRP7Rg",
       mirror [
-        "https://github.com/vekatze/neut-core/raw/main/archive/0.57.11.tar.zst",
+        "https://github.com/vekatze/neut-core/raw/main/archive/0.57.12.tar.zst",
       ],
       enable-preset true,
     },
     http-base {
-      digest "uSpyzaWPPCj6JKBF1gb2Q8mtw6obA4fQr0WXs9baV6g",
+      digest "YpnKnSbuT3d_3NOPwpEqvx-QoI21UXfDS8biU6_g-6k",
       mirror [
-        "https://github.com/vekatze/http-base-nt/raw/main/archive/0.2.6.tar.zst",
+        "https://github.com/vekatze/http-base-nt/raw/main/archive/0.2.7.tar.zst",
       ],
     },
   },
